@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type CSSProperties } from 'react';
 import {
   usePortrait,
   type FaceShape,
@@ -6,6 +6,7 @@ import {
   type BrowsStyle,
   type NoseStyle,
   type MouthStyle,
+  type HairStyle,
 } from '../store/portrait';
 
 import RoundFace from '../assets/face/round.svg?react';
@@ -34,6 +35,17 @@ import MouthDot from '../assets/mouth/dot.svg?react';
 import MouthSmile from '../assets/mouth/smile.svg?react';
 import MouthOpen from '../assets/mouth/open.svg?react';
 import MouthFlat from '../assets/mouth/flat.svg?react';
+
+import HairNoneBack from '../assets/hair/none/back.svg?react';
+import HairNoneFront from '../assets/hair/none/front.svg?react';
+import HairShortBack from '../assets/hair/short/back.svg?react';
+import HairShortFront from '../assets/hair/short/front.svg?react';
+import HairBobBack from '../assets/hair/bob/back.svg?react';
+import HairBobFront from '../assets/hair/bob/front.svg?react';
+import HairLongBack from '../assets/hair/long/back.svg?react';
+import HairLongFront from '../assets/hair/long/front.svg?react';
+import HairPonytailBack from '../assets/hair/ponytail/back.svg?react';
+import HairPonytailFront from '../assets/hair/ponytail/front.svg?react';
 
 type SvgComp = React.FC<React.SVGProps<SVGSVGElement>>;
 
@@ -74,14 +86,37 @@ const MOUTH: Record<MouthStyle, SvgComp> = {
   flat: MouthFlat,
 };
 
+const HAIR_BACK: Record<HairStyle, SvgComp> = {
+  none: HairNoneBack,
+  short: HairShortBack,
+  bob: HairBobBack,
+  long: HairLongBack,
+  ponytail: HairPonytailBack,
+};
+
+const HAIR_FRONT: Record<HairStyle, SvgComp> = {
+  none: HairNoneFront,
+  short: HairShortFront,
+  bob: HairBobFront,
+  long: HairLongFront,
+  ponytail: HairPonytailFront,
+};
+
 export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
-  const { face, eyes, brows, nose, mouth, skinTone, userImage } = usePortrait();
+  const { face, eyes, brows, nose, mouth, hair, hairFill, skinTone, userImage } = usePortrait();
 
   const FaceSvg = FACE[face];
   const EyesSvg = EYES[eyes];
   const BrowsSvg = BROWS[brows];
   const NoseSvg = NOSE[nose];
   const MouthSvg = MOUTH[mouth];
+  const HairBackSvg = HAIR_BACK[hair];
+  const HairFrontSvg = HAIR_FRONT[hair];
+
+  const hairStyle: CSSProperties =
+    hairFill.type === 'solid'
+      ? ({ ['--hair-fill' as string]: hairFill.color } as CSSProperties)
+      : ({ ['--hair-fill' as string]: 'url(#hair-gradient)' } as CSSProperties);
 
   return (
     <svg
@@ -90,6 +125,19 @@ export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
       viewBox="0 0 128 128"
       xmlns="http://www.w3.org/2000/svg"
     >
+      {hairFill.type === 'gradient' && (
+        <defs>
+          <linearGradient id="hair-gradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={hairFill.from} />
+            <stop offset="100%" stopColor={hairFill.to} />
+          </linearGradient>
+        </defs>
+      )}
+
+      <g style={hairStyle}>
+        <HairBackSvg width={128} height={128} />
+      </g>
+
       <g style={{ color: skinTone }}>
         <FaceSvg width={128} height={128} />
       </g>
@@ -98,6 +146,10 @@ export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
       <BrowsSvg width={128} height={128} />
       <NoseSvg width={128} height={128} />
       <MouthSvg width={128} height={128} />
+
+      <g style={hairStyle}>
+        <HairFrontSvg width={128} height={128} />
+      </g>
 
       {userImage && (
         <image

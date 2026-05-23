@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <path
+    d="M 22 46
+       Q 18 12 64 10
+       Q 110 12 106 46
+       Q 92 36 76 46
+       L 64 38
+       L 52 46
+       Q 36 36 22 46 Z"
+    fill="var(--hair-fill, #4a3020)"
+  />
+</svg>

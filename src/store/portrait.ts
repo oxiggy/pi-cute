@@ -5,6 +5,11 @@ export type EyesStyle = 'none' | 'dots' | 'smile' | 'wink' | 'angry';
 export type BrowsStyle = 'none' | 'flat' | 'raised' | 'angry' | 'sad';
 export type NoseStyle = 'none' | 'dot' | 'curve';
 export type MouthStyle = 'none' | 'smile' | 'dot' | 'open' | 'flat';
+export type HairStyle = 'none' | 'short' | 'bob' | 'long' | 'ponytail';
+
+export type HairFill =
+  | { type: 'solid'; color: string }
+  | { type: 'gradient'; from: string; to: string };
 
 export const FACE_SHAPES: { id: FaceShape; label: string }[] = [
   { id: 'round', label: 'Round' },
@@ -43,12 +48,22 @@ export const MOUTH_STYLES: { id: MouthStyle; label: string }[] = [
   { id: 'none', label: 'None' },
 ];
 
+export const HAIR_STYLES: { id: HairStyle; label: string }[] = [
+  { id: 'none', label: 'None' },
+  { id: 'short', label: 'Short' },
+  { id: 'bob', label: 'Bob' },
+  { id: 'long', label: 'Long' },
+  { id: 'ponytail', label: 'Ponytail' },
+];
+
 type PortraitState = {
   face: FaceShape;
   eyes: EyesStyle;
   brows: BrowsStyle;
   nose: NoseStyle;
   mouth: MouthStyle;
+  hair: HairStyle;
+  hairFill: HairFill;
   skinTone: string;
   userImage: string | null;
   setFace: (face: FaceShape) => void;
@@ -56,6 +71,8 @@ type PortraitState = {
   setBrows: (brows: BrowsStyle) => void;
   setNose: (nose: NoseStyle) => void;
   setMouth: (mouth: MouthStyle) => void;
+  setHair: (hair: HairStyle) => void;
+  setHairFill: (fill: HairFill) => void;
   setSkinTone: (color: string) => void;
   setUserImage: (dataUrl: string | null) => void;
 };
@@ -66,6 +83,8 @@ export const usePortrait = create<PortraitState>((set) => ({
   brows: 'none',
   nose: 'none',
   mouth: 'smile',
+  hair: 'short',
+  hairFill: { type: 'solid', color: '#4a3020' },
   skinTone: '#f0c8a0',
   userImage: null,
   setFace: (face) => set({ face }),
@@ -73,6 +92,8 @@ export const usePortrait = create<PortraitState>((set) => ({
   setBrows: (brows) => set({ brows }),
   setNose: (nose) => set({ nose }),
   setMouth: (mouth) => set({ mouth }),
+  setHair: (hair) => set({ hair }),
+  setHairFill: (hairFill) => set({ hairFill }),
   setSkinTone: (skinTone) => set({ skinTone }),
   setUserImage: (userImage) => set({ userImage }),
 }));
