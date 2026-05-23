@@ -15,6 +15,7 @@ export type EarStyle = 'none' | 'human' | 'cat' | 'lynx' | 'wolf' | 'rabbit';
 export type HornStyle = 'none' | 'demon' | 'small';
 export type HairAccessoryStyle = 'none' | 'halo' | 'tiara';
 export type MakeupStyle = 'none' | 'cheekStripes' | 'freckles' | 'mole' | 'foreheadDot';
+export type BeardStyle = 'none' | 'beard' | 'mustache';
 
 /** Fill for any layer — either solid or two-stop linear gradient with angle (deg). */
 export type LayerFill =
@@ -34,6 +35,7 @@ export const PAINTABLE_LAYERS = [
   'hairAccessory',
   'makeup',
   'eyeLeft', 'eyeRight', 'browLeft', 'browRight', 'nose', 'mouth',
+  'beard',
 ] as const;
 export type PaintableLayerId = (typeof PAINTABLE_LAYERS)[number];
 
@@ -44,6 +46,7 @@ export const BUILTIN_LAYERS = [
   'hairAccessory',
   'makeup',
   'eyeLeft', 'eyeRight', 'browLeft', 'browRight', 'nose', 'mouth',
+  'beard',
 ] as const;
 export type BuiltinLayerId = (typeof BUILTIN_LAYERS)[number];
 
@@ -63,6 +66,7 @@ export const BUILTIN_LAYER_LABELS: Record<BuiltinLayerId, string> = {
   browRight: 'Правая бровь',
   nose: 'Нос',
   mouth: 'Рот',
+  beard: 'Борода',
 };
 
 export const FACE_SHAPES: { id: FaceShape; label: string }[] = [
@@ -145,6 +149,12 @@ export const MAKEUP_STYLES: { id: MakeupStyle; label: string }[] = [
   { id: 'foreheadDot', label: 'Forehead Dot' },
 ];
 
+export const BEARD_STYLES: { id: BeardStyle; label: string }[] = [
+  { id: 'none', label: 'None' },
+  { id: 'beard', label: 'Beard' },
+  { id: 'mustache', label: 'Mustache' },
+];
+
 const solid = (color: string): LayerFill => ({ type: 'solid', color });
 
 const DEFAULT_LAYER_COLORS: Record<PaintableLayerId, LayerFill> = {
@@ -164,6 +174,7 @@ const DEFAULT_LAYER_COLORS: Record<PaintableLayerId, LayerFill> = {
   browRight: solid('#222222'),
   nose: solid('#000000'),
   mouth: solid('#5a2a2a'),
+  beard: solid('#4a3020'),
 };
 
 type PortraitState = {
@@ -183,6 +194,7 @@ type PortraitState = {
   hornRight: HornStyle;
   hairAccessory: HairAccessoryStyle;
   makeup: MakeupStyle;
+  beard: BeardStyle;
 
   layerColors: Record<PaintableLayerId, LayerFill>;
 
@@ -206,6 +218,7 @@ type PortraitState = {
   setHornRight: (h: HornStyle) => void;
   setHairAccessory: (a: HairAccessoryStyle) => void;
   setMakeup: (m: MakeupStyle) => void;
+  setBeard: (b: BeardStyle) => void;
 
   setLayerColor: (id: PaintableLayerId, fill: LayerFill) => void;
 
@@ -235,6 +248,7 @@ export const usePortrait = create<PortraitState>((set) => ({
   hornRight: 'none',
   hairAccessory: 'none',
   makeup: 'none',
+  beard: 'none',
 
   layerColors: DEFAULT_LAYER_COLORS,
 
@@ -249,6 +263,7 @@ export const usePortrait = create<PortraitState>((set) => ({
     hornRight: { ...DEFAULT_TRANSFORM },
     hairAccessory: { ...DEFAULT_TRANSFORM },
     makeup: { ...DEFAULT_TRANSFORM },
+    beard: { ...DEFAULT_TRANSFORM },
     eyeLeft: { ...DEFAULT_TRANSFORM },
     eyeRight: { ...DEFAULT_TRANSFORM },
     browLeft: { ...DEFAULT_TRANSFORM },
@@ -274,6 +289,7 @@ export const usePortrait = create<PortraitState>((set) => ({
   setHornRight: (hornRight) => set({ hornRight }),
   setHairAccessory: (hairAccessory) => set({ hairAccessory }),
   setMakeup: (makeup) => set({ makeup }),
+  setBeard: (beard) => set({ beard }),
 
   setLayerColor: (id, fill) =>
     set((s) => ({ layerColors: { ...s.layerColors, [id]: fill } })),

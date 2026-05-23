@@ -15,6 +15,7 @@ import {
   type HornStyle,
   type HairAccessoryStyle,
   type MakeupStyle,
+  type BeardStyle,
   type PaintableLayerId,
   type LayerFill,
 } from '../store/portrait';
@@ -97,6 +98,10 @@ import MakeupFreckles from '../assets/makeup/freckles.svg?react';
 import MakeupMole from '../assets/makeup/mole.svg?react';
 import MakeupForeheadDot from '../assets/makeup/foreheadDot.svg?react';
 
+import BeardNone from '../assets/beard/none.svg?react';
+import BeardFull from '../assets/beard/beard.svg?react';
+import BeardMustache from '../assets/beard/mustache.svg?react';
+
 type SvgComp = React.FC<React.SVGProps<SVGSVGElement>>;
 
 const FACE: Record<FaceShape, SvgComp> = {
@@ -156,6 +161,9 @@ const MAKEUP_S: Record<MakeupStyle, SvgComp> = {
   mole: MakeupMole,
   foreheadDot: MakeupForeheadDot,
 };
+const BEARD_S: Record<BeardStyle, SvgComp> = {
+  none: BeardNone, beard: BeardFull, mustache: BeardMustache,
+};
 
 function gradientId(layerId: PaintableLayerId) {
   return `grad-${layerId}`;
@@ -172,7 +180,7 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
   const {
     face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth,
     bangs, hairLeft, hairRight, earLeft, earRight,
-    hornLeft, hornRight, hairAccessory, makeup,
+    hornLeft, hornRight, hairAccessory, makeup, beard,
     layerColors, customLayers, setActiveLayer,
   } = usePortrait();
 
@@ -192,6 +200,7 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
   const HornRightSvg = HORN_RIGHT_S[hornRight];
   const HairAccessorySvg = HAIR_ACCESSORY_S[hairAccessory];
   const MakeupSvg = MAKEUP_S[makeup];
+  const BeardSvg = BEARD_S[beard];
 
   return (
     <svg
@@ -266,6 +275,12 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
       <DraggableLayer id="mouth" svgRef={svgRef}>
         <g className="layer-paint" style={paintStyle(layerColors.mouth, 'mouth')}>
           <MouthSvg width={128} height={128} />
+        </g>
+      </DraggableLayer>
+
+      <DraggableLayer id="beard" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.beard, 'beard')}>
+          <BeardSvg width={128} height={128} />
         </g>
       </DraggableLayer>
 

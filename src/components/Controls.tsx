@@ -12,6 +12,7 @@ import {
   HORN_STYLES,
   HAIR_ACCESSORY_STYLES,
   MAKEUP_STYLES,
+  BEARD_STYLES,
   BUILTIN_LAYERS,
   BUILTIN_LAYER_LABELS,
   DEFAULT_TRANSFORM,
@@ -25,11 +26,11 @@ export function Controls({ onExport }: Props) {
   const {
     face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth,
     bangs, hairLeft, hairRight, earLeft, earRight,
-    hornLeft, hornRight, hairAccessory, makeup,
+    hornLeft, hornRight, hairAccessory, makeup, beard,
     layerColors, customLayers, transforms, activeLayer,
     setFace, setEyeLeft, setEyeRight, setBrowLeft, setBrowRight, setNose, setMouth,
     setBangs, setHairLeft, setHairRight, setEarLeft, setEarRight,
-    setHornLeft, setHornRight, setHairAccessory, setMakeup,
+    setHornLeft, setHornRight, setHairAccessory, setMakeup, setBeard,
     setLayerColor, addCustomLayer, removeCustomLayer,
     setActiveLayer, setTransform, resetTransform,
   } = usePortrait();
@@ -186,6 +187,20 @@ export function Controls({ onExport }: Props) {
               key={s.id}
               className={`shape-btn ${makeup === s.id ? 'active' : ''}`}
               onClick={() => setMakeup(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </LayerSection>
+
+      <LayerSection title="Борода" {...fillProps('beard')}>
+        <div className="shape-grid">
+          {BEARD_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${beard === s.id ? 'active' : ''}`}
+              onClick={() => setBeard(s.id)}
             >
               {s.label}
             </button>
