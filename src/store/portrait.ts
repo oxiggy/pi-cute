@@ -9,7 +9,8 @@ export type EyeStyle = 'none' | 'dot' | 'closed' | 'angry';
 export type BrowStyle = 'none' | 'flat' | 'raised' | 'angry' | 'sad';
 export type NoseStyle = 'none' | 'dot' | 'curve';
 export type MouthStyle = 'none' | 'smile' | 'dot' | 'open' | 'flat';
-export type HairStyle = 'none' | 'short' | 'bob' | 'long' | 'ponytail';
+export type BangsStyle = 'none' | 'demo';
+export type HairSideStyle = 'none' | 'demo';
 
 /** Fill for any layer — either solid or two-stop linear gradient with angle (deg). */
 export type LayerFill =
@@ -23,15 +24,21 @@ export type CustomLayer = { id: string; type: 'image'; src: string; name: string
 
 /** Visual layers that can have fill + style + transform. */
 export const PAINTABLE_LAYERS = [
-  'face', 'hair', 'eyeLeft', 'eyeRight', 'browLeft', 'browRight', 'nose', 'mouth',
+  'face', 'bangs', 'hairLeft', 'hairRight',
+  'eyeLeft', 'eyeRight', 'browLeft', 'browRight', 'nose', 'mouth',
 ] as const;
 export type PaintableLayerId = (typeof PAINTABLE_LAYERS)[number];
 
-export const BUILTIN_LAYERS = ['hair', 'eyeLeft', 'eyeRight', 'browLeft', 'browRight', 'nose', 'mouth'] as const;
+export const BUILTIN_LAYERS = [
+  'bangs', 'hairLeft', 'hairRight',
+  'eyeLeft', 'eyeRight', 'browLeft', 'browRight', 'nose', 'mouth',
+] as const;
 export type BuiltinLayerId = (typeof BUILTIN_LAYERS)[number];
 
 export const BUILTIN_LAYER_LABELS: Record<BuiltinLayerId, string> = {
-  hair: 'Волосы',
+  bangs: 'Чёлка',
+  hairLeft: 'Волосы (лев)',
+  hairRight: 'Волосы (прав)',
   eyeLeft: 'Левый глаз',
   eyeRight: 'Правый глаз',
   browLeft: 'Левая бровь',
@@ -81,19 +88,23 @@ export const MOUTH_STYLES: { id: MouthStyle; label: string }[] = [
   { id: 'none', label: 'None' },
 ];
 
-export const HAIR_STYLES: { id: HairStyle; label: string }[] = [
+export const BANGS_STYLES: { id: BangsStyle; label: string }[] = [
   { id: 'none', label: 'None' },
-  { id: 'short', label: 'Short' },
-  { id: 'bob', label: 'Bob' },
-  { id: 'long', label: 'Long' },
-  { id: 'ponytail', label: 'Ponytail' },
+  { id: 'demo', label: 'Demo' },
+];
+
+export const HAIR_SIDE_STYLES: { id: HairSideStyle; label: string }[] = [
+  { id: 'none', label: 'None' },
+  { id: 'demo', label: 'Demo' },
 ];
 
 const solid = (color: string): LayerFill => ({ type: 'solid', color });
 
 const DEFAULT_LAYER_COLORS: Record<PaintableLayerId, LayerFill> = {
   face: solid('#f0c8a0'),
-  hair: solid('#4a3020'),
+  bangs: solid('#4a3020'),
+  hairLeft: solid('#4a3020'),
+  hairRight: solid('#4a3020'),
   eyeLeft: solid('#222222'),
   eyeRight: solid('#222222'),
   browLeft: solid('#222222'),
@@ -110,7 +121,9 @@ type PortraitState = {
   browRight: BrowStyle;
   nose: NoseStyle;
   mouth: MouthStyle;
-  hair: HairStyle;
+  bangs: BangsStyle;
+  hairLeft: HairSideStyle;
+  hairRight: HairSideStyle;
 
   layerColors: Record<PaintableLayerId, LayerFill>;
 
@@ -125,7 +138,9 @@ type PortraitState = {
   setBrowRight: (brow: BrowStyle) => void;
   setNose: (nose: NoseStyle) => void;
   setMouth: (mouth: MouthStyle) => void;
-  setHair: (hair: HairStyle) => void;
+  setBangs: (bangs: BangsStyle) => void;
+  setHairLeft: (hair: HairSideStyle) => void;
+  setHairRight: (hair: HairSideStyle) => void;
 
   setLayerColor: (id: PaintableLayerId, fill: LayerFill) => void;
 
@@ -146,13 +161,17 @@ export const usePortrait = create<PortraitState>((set) => ({
   browRight: 'none',
   nose: 'none',
   mouth: 'smile',
-  hair: 'short',
+  bangs: 'demo',
+  hairLeft: 'none',
+  hairRight: 'none',
 
   layerColors: DEFAULT_LAYER_COLORS,
 
   customLayers: [],
   transforms: {
-    hair: { ...DEFAULT_TRANSFORM },
+    bangs: { ...DEFAULT_TRANSFORM },
+    hairLeft: { ...DEFAULT_TRANSFORM },
+    hairRight: { ...DEFAULT_TRANSFORM },
     eyeLeft: { ...DEFAULT_TRANSFORM },
     eyeRight: { ...DEFAULT_TRANSFORM },
     browLeft: { ...DEFAULT_TRANSFORM },
@@ -169,7 +188,9 @@ export const usePortrait = create<PortraitState>((set) => ({
   setBrowRight: (browRight) => set({ browRight }),
   setNose: (nose) => set({ nose }),
   setMouth: (mouth) => set({ mouth }),
-  setHair: (hair) => set({ hair }),
+  setBangs: (bangs) => set({ bangs }),
+  setHairLeft: (hairLeft) => set({ hairLeft }),
+  setHairRight: (hairRight) => set({ hairRight }),
 
   setLayerColor: (id, fill) =>
     set((s) => ({ layerColors: { ...s.layerColors, [id]: fill } })),
