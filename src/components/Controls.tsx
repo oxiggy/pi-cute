@@ -2,7 +2,7 @@ import { type ChangeEvent } from 'react';
 import {
   usePortrait,
   FACE_SHAPES,
-  EYES_STYLES,
+  EYE_STYLES,
   BROWS_STYLES,
   NOSE_STYLES,
   MOUTH_STYLES,
@@ -16,9 +16,9 @@ type Props = { onExport: () => void };
 
 export function Controls({ onExport }: Props) {
   const {
-    face, eyes, brows, nose, mouth, hair, hairFill, skinTone,
+    face, eyeLeft, eyeRight, brows, nose, mouth, hair, hairFill, skinTone,
     customLayers, transforms, activeLayer,
-    setFace, setEyes, setBrows, setNose, setMouth, setHair, setHairFill,
+    setFace, setEyeLeft, setEyeRight, setBrows, setNose, setMouth, setHair, setHairFill,
     setSkinTone, addCustomLayer, removeCustomLayer,
     setActiveLayer, setTransform, resetTransform,
   } = usePortrait();
@@ -114,13 +114,28 @@ export function Controls({ onExport }: Props) {
       </div>
 
       <div className="control-group">
-        <label>Глаза</label>
+        <label>Левый глаз</label>
         <div className="shape-grid">
-          {EYES_STYLES.map((s) => (
+          {EYE_STYLES.map((s) => (
             <button
               key={s.id}
-              className={`shape-btn ${eyes === s.id ? 'active' : ''}`}
-              onClick={() => setEyes(s.id)}
+              className={`shape-btn ${eyeLeft === s.id ? 'active' : ''}`}
+              onClick={() => setEyeLeft(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="control-group">
+        <label>Правый глаз</label>
+        <div className="shape-grid">
+          {EYE_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${eyeRight === s.id ? 'active' : ''}`}
+              onClick={() => setEyeRight(s.id)}
             >
               {s.label}
             </button>

@@ -2,7 +2,7 @@ import { forwardRef, useRef, useImperativeHandle, type CSSProperties } from 'rea
 import {
   usePortrait,
   type FaceShape,
-  type EyesStyle,
+  type EyeStyle,
   type BrowsStyle,
   type NoseStyle,
   type MouthStyle,
@@ -15,11 +15,14 @@ import OvalFace from '../assets/face/oval.svg?react';
 import SquareFace from '../assets/face/square.svg?react';
 import LongFace from '../assets/face/long.svg?react';
 
-import EyesNone from '../assets/eyes/none.svg?react';
-import EyesDots from '../assets/eyes/dots.svg?react';
-import EyesSmile from '../assets/eyes/smile.svg?react';
-import EyesWink from '../assets/eyes/wink.svg?react';
-import EyesAngry from '../assets/eyes/angry.svg?react';
+import EyeNoneLeft from '../assets/eye/none/left.svg?react';
+import EyeNoneRight from '../assets/eye/none/right.svg?react';
+import EyeDotLeft from '../assets/eye/dot/left.svg?react';
+import EyeDotRight from '../assets/eye/dot/right.svg?react';
+import EyeClosedLeft from '../assets/eye/closed/left.svg?react';
+import EyeClosedRight from '../assets/eye/closed/right.svg?react';
+import EyeAngryLeft from '../assets/eye/angry/left.svg?react';
+import EyeAngryRight from '../assets/eye/angry/right.svg?react';
 
 import BrowsNone from '../assets/brows/none.svg?react';
 import BrowsFlat from '../assets/brows/flat.svg?react';
@@ -53,8 +56,11 @@ type SvgComp = React.FC<React.SVGProps<SVGSVGElement>>;
 const FACE: Record<FaceShape, SvgComp> = {
   round: RoundFace, oval: OvalFace, square: SquareFace, long: LongFace,
 };
-const EYES: Record<EyesStyle, SvgComp> = {
-  none: EyesNone, dots: EyesDots, smile: EyesSmile, wink: EyesWink, angry: EyesAngry,
+const EYE_LEFT: Record<EyeStyle, SvgComp> = {
+  none: EyeNoneLeft, dot: EyeDotLeft, closed: EyeClosedLeft, angry: EyeAngryLeft,
+};
+const EYE_RIGHT: Record<EyeStyle, SvgComp> = {
+  none: EyeNoneRight, dot: EyeDotRight, closed: EyeClosedRight, angry: EyeAngryRight,
 };
 const BROWS: Record<BrowsStyle, SvgComp> = {
   none: BrowsNone, flat: BrowsFlat, raised: BrowsRaised, angry: BrowsAngry, sad: BrowsSad,
@@ -77,12 +83,13 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
   useImperativeHandle(externalRef, () => svgRef.current!, []);
 
   const {
-    face, eyes, brows, nose, mouth, hair, hairFill, skinTone,
+    face, eyeLeft, eyeRight, brows, nose, mouth, hair, hairFill, skinTone,
     customLayers, setActiveLayer,
   } = usePortrait();
 
   const FaceSvg = FACE[face];
-  const EyesSvg = EYES[eyes];
+  const EyeLeftSvg = EYE_LEFT[eyeLeft];
+  const EyeRightSvg = EYE_RIGHT[eyeRight];
   const BrowsSvg = BROWS[brows];
   const NoseSvg = NOSE[nose];
   const MouthSvg = MOUTH[mouth];
@@ -120,8 +127,11 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
         <FaceSvg width={128} height={128} />
       </g>
 
-      <DraggableLayer id="eyes" svgRef={svgRef}>
-        <EyesSvg width={128} height={128} />
+      <DraggableLayer id="eyeLeft" svgRef={svgRef}>
+        <EyeLeftSvg width={128} height={128} />
+      </DraggableLayer>
+      <DraggableLayer id="eyeRight" svgRef={svgRef}>
+        <EyeRightSvg width={128} height={128} />
       </DraggableLayer>
       <DraggableLayer id="brows" svgRef={svgRef}>
         <BrowsSvg width={128} height={128} />

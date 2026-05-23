@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export type FaceShape = 'round' | 'oval' | 'square' | 'long';
-export type EyesStyle = 'none' | 'dots' | 'smile' | 'wink' | 'angry';
+export type EyeStyle = 'none' | 'dot' | 'closed' | 'angry';
 export type BrowsStyle = 'none' | 'flat' | 'raised' | 'angry' | 'sad';
 export type NoseStyle = 'none' | 'dot' | 'curve';
 export type MouthStyle = 'none' | 'smile' | 'dot' | 'open' | 'flat';
@@ -22,12 +22,13 @@ export type CustomLayer = {
   name: string;
 };
 
-export const BUILTIN_LAYERS = ['hair', 'eyes', 'brows', 'nose', 'mouth'] as const;
+export const BUILTIN_LAYERS = ['hair', 'eyeLeft', 'eyeRight', 'brows', 'nose', 'mouth'] as const;
 export type BuiltinLayerId = (typeof BUILTIN_LAYERS)[number];
 
 export const BUILTIN_LAYER_LABELS: Record<BuiltinLayerId, string> = {
   hair: 'Волосы',
-  eyes: 'Глаза',
+  eyeLeft: 'Левый глаз',
+  eyeRight: 'Правый глаз',
   brows: 'Брови',
   nose: 'Нос',
   mouth: 'Рот',
@@ -40,10 +41,9 @@ export const FACE_SHAPES: { id: FaceShape; label: string }[] = [
   { id: 'long', label: 'Long' },
 ];
 
-export const EYES_STYLES: { id: EyesStyle; label: string }[] = [
-  { id: 'dots', label: 'Dots' },
-  { id: 'smile', label: 'Smile' },
-  { id: 'wink', label: 'Wink' },
+export const EYE_STYLES: { id: EyeStyle; label: string }[] = [
+  { id: 'dot', label: 'Dot' },
+  { id: 'closed', label: 'Closed' },
   { id: 'angry', label: 'Angry' },
   { id: 'none', label: 'None' },
 ];
@@ -80,7 +80,8 @@ export const HAIR_STYLES: { id: HairStyle; label: string }[] = [
 
 type PortraitState = {
   face: FaceShape;
-  eyes: EyesStyle;
+  eyeLeft: EyeStyle;
+  eyeRight: EyeStyle;
   brows: BrowsStyle;
   nose: NoseStyle;
   mouth: MouthStyle;
@@ -91,7 +92,8 @@ type PortraitState = {
   transforms: Record<string, LayerTransform>;
   activeLayer: string | null;
   setFace: (face: FaceShape) => void;
-  setEyes: (eyes: EyesStyle) => void;
+  setEyeLeft: (eye: EyeStyle) => void;
+  setEyeRight: (eye: EyeStyle) => void;
   setBrows: (brows: BrowsStyle) => void;
   setNose: (nose: NoseStyle) => void;
   setMouth: (mouth: MouthStyle) => void;
@@ -109,7 +111,8 @@ let customCounter = 0;
 
 export const usePortrait = create<PortraitState>((set) => ({
   face: 'round',
-  eyes: 'dots',
+  eyeLeft: 'dot',
+  eyeRight: 'dot',
   brows: 'none',
   nose: 'none',
   mouth: 'smile',
@@ -119,14 +122,16 @@ export const usePortrait = create<PortraitState>((set) => ({
   customLayers: [],
   transforms: {
     hair: { ...DEFAULT_TRANSFORM },
-    eyes: { ...DEFAULT_TRANSFORM },
+    eyeLeft: { ...DEFAULT_TRANSFORM },
+    eyeRight: { ...DEFAULT_TRANSFORM },
     brows: { ...DEFAULT_TRANSFORM },
     nose: { ...DEFAULT_TRANSFORM },
     mouth: { ...DEFAULT_TRANSFORM },
   },
   activeLayer: null,
   setFace: (face) => set({ face }),
-  setEyes: (eyes) => set({ eyes }),
+  setEyeLeft: (eyeLeft) => set({ eyeLeft }),
+  setEyeRight: (eyeRight) => set({ eyeRight }),
   setBrows: (brows) => set({ brows }),
   setNose: (nose) => set({ nose }),
   setMouth: (mouth) => set({ mouth }),
