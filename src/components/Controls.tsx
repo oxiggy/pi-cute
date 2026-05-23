@@ -8,6 +8,7 @@ import {
   MOUTH_STYLES,
   BANGS_STYLES,
   HAIR_SIDE_STYLES,
+  EAR_STYLES,
   BUILTIN_LAYERS,
   BUILTIN_LAYER_LABELS,
   DEFAULT_TRANSFORM,
@@ -20,10 +21,10 @@ type Props = { onExport: () => void };
 export function Controls({ onExport }: Props) {
   const {
     face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth,
-    bangs, hairLeft, hairRight,
+    bangs, hairLeft, hairRight, earLeft, earRight,
     layerColors, customLayers, transforms, activeLayer,
     setFace, setEyeLeft, setEyeRight, setBrowLeft, setBrowRight, setNose, setMouth,
-    setBangs, setHairLeft, setHairRight,
+    setBangs, setHairLeft, setHairRight, setEarLeft, setEarRight,
     setLayerColor, addCustomLayer, removeCustomLayer,
     setActiveLayer, setTransform, resetTransform,
   } = usePortrait();
@@ -96,6 +97,34 @@ export function Controls({ onExport }: Props) {
               key={s.id}
               className={`shape-btn ${hairRight === s.id ? 'active' : ''}`}
               onClick={() => setHairRight(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </LayerSection>
+
+      <LayerSection title="Левое ухо" {...fillProps('earLeft')}>
+        <div className="shape-grid">
+          {EAR_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${earLeft === s.id ? 'active' : ''}`}
+              onClick={() => setEarLeft(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </LayerSection>
+
+      <LayerSection title="Правое ухо" {...fillProps('earRight')}>
+        <div className="shape-grid">
+          {EAR_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${earRight === s.id ? 'active' : ''}`}
+              onClick={() => setEarRight(s.id)}
             >
               {s.label}
             </button>

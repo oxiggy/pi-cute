@@ -11,6 +11,7 @@ import {
   type MouthStyle,
   type BangsStyle,
   type HairSideStyle,
+  type EarStyle,
   type PaintableLayerId,
   type LayerFill,
 } from '../store/portrait';
@@ -63,6 +64,19 @@ import HairLeftDemo from '../assets/hair-left/demo.svg?react';
 import HairRightNone from '../assets/hair-right/none.svg?react';
 import HairRightDemo from '../assets/hair-right/demo.svg?react';
 
+import EarLeftNone from '../assets/ear-left/none.svg?react';
+import EarLeftHuman from '../assets/ear-left/human.svg?react';
+import EarLeftCat from '../assets/ear-left/cat.svg?react';
+import EarLeftLynx from '../assets/ear-left/lynx.svg?react';
+import EarLeftWolf from '../assets/ear-left/wolf.svg?react';
+import EarLeftRabbit from '../assets/ear-left/rabbit.svg?react';
+import EarRightNone from '../assets/ear-right/none.svg?react';
+import EarRightHuman from '../assets/ear-right/human.svg?react';
+import EarRightCat from '../assets/ear-right/cat.svg?react';
+import EarRightLynx from '../assets/ear-right/lynx.svg?react';
+import EarRightWolf from '../assets/ear-right/wolf.svg?react';
+import EarRightRabbit from '../assets/ear-right/rabbit.svg?react';
+
 type SvgComp = React.FC<React.SVGProps<SVGSVGElement>>;
 
 const FACE: Record<FaceShape, SvgComp> = {
@@ -98,6 +112,14 @@ const HAIR_LEFT: Record<HairSideStyle, SvgComp> = {
 const HAIR_RIGHT: Record<HairSideStyle, SvgComp> = {
   none: HairRightNone, demo: HairRightDemo,
 };
+const EAR_LEFT_S: Record<EarStyle, SvgComp> = {
+  none: EarLeftNone, human: EarLeftHuman, cat: EarLeftCat,
+  lynx: EarLeftLynx, wolf: EarLeftWolf, rabbit: EarLeftRabbit,
+};
+const EAR_RIGHT_S: Record<EarStyle, SvgComp> = {
+  none: EarRightNone, human: EarRightHuman, cat: EarRightCat,
+  lynx: EarRightLynx, wolf: EarRightWolf, rabbit: EarRightRabbit,
+};
 
 function gradientId(layerId: PaintableLayerId) {
   return `grad-${layerId}`;
@@ -113,7 +135,7 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
 
   const {
     face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth,
-    bangs, hairLeft, hairRight,
+    bangs, hairLeft, hairRight, earLeft, earRight,
     layerColors, customLayers, setActiveLayer,
   } = usePortrait();
 
@@ -127,6 +149,8 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
   const BangsSvg = BANGS[bangs];
   const HairLeftSvg = HAIR_LEFT[hairLeft];
   const HairRightSvg = HAIR_RIGHT[hairRight];
+  const EarLeftSvg = EAR_LEFT_S[earLeft];
+  const EarRightSvg = EAR_RIGHT_S[earRight];
 
   return (
     <svg
@@ -201,6 +225,17 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
       <DraggableLayer id="bangs" svgRef={svgRef}>
         <g className="layer-paint" style={paintStyle(layerColors.bangs, 'bangs')}>
           <BangsSvg width={128} height={128} />
+        </g>
+      </DraggableLayer>
+
+      <DraggableLayer id="earLeft" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.earLeft, 'earLeft')}>
+          <EarLeftSvg width={128} height={128} />
+        </g>
+      </DraggableLayer>
+      <DraggableLayer id="earRight" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.earRight, 'earRight')}>
+          <EarRightSvg width={128} height={128} />
         </g>
       </DraggableLayer>
 
