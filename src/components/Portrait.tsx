@@ -10,14 +10,15 @@ import {
 } from '../store/portrait';
 import { DraggableLayer } from './DraggableLayer';
 
-import Round1 from '../assets/face/round1.svg?react';
-import Round2 from '../assets/face/round2.svg?react';
-import Oval1 from '../assets/face/oval1.svg?react';
-import Oval2 from '../assets/face/oval2.svg?react';
-import Square1 from '../assets/face/square1.svg?react';
-import Square2 from '../assets/face/square2.svg?react';
-import Long1 from '../assets/face/long1.svg?react';
-import Long2 from '../assets/face/long2.svg?react';
+import FaceDefault from '../assets/face/default.svg?react';
+import FaceDefault2 from '../assets/face/default2.svg?react';
+import FaceRound from '../assets/face/round.svg?react';
+import FaceSquare from '../assets/face/square.svg?react';
+import FaceOval from '../assets/face/oval.svg?react';
+import FaceOval2 from '../assets/face/oval2.svg?react';
+import FaceLong from '../assets/face/long.svg?react';
+import FaceLong1 from '../assets/face/long1.svg?react';
+import FaceLong2 from '../assets/face/long2.svg?react';
 
 import EyeNoneLeft from '../assets/eye/none/left.svg?react';
 import EyeNoneRight from '../assets/eye/none/right.svg?react';
@@ -63,10 +64,10 @@ import HairPonytailFront from '../assets/hair/ponytail/front.svg?react';
 type SvgComp = React.FC<React.SVGProps<SVGSVGElement>>;
 
 const FACE: Record<FaceShape, SvgComp> = {
-  round1: Round1, round2: Round2,
-  oval1: Oval1, oval2: Oval2,
-  square1: Square1, square2: Square2,
-  long1: Long1, long2: Long2,
+  default: FaceDefault, default2: FaceDefault2,
+  round: FaceRound, square: FaceSquare,
+  oval: FaceOval, oval2: FaceOval2,
+  long: FaceLong, long1: FaceLong1, long2: FaceLong2,
 };
 const EYE_LEFT: Record<EyeStyle, SvgComp> = {
   none: EyeNoneLeft, dot: EyeDotLeft, closed: EyeClosedLeft, angry: EyeAngryLeft,

@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 
 export type FaceShape =
-  | 'round1' | 'round2'
-  | 'oval1' | 'oval2'
-  | 'square1' | 'square2'
-  | 'long1' | 'long2';
+  | 'default' | 'default2'
+  | 'round' | 'square'
+  | 'oval' | 'oval2'
+  | 'long' | 'long1' | 'long2';
 export type EyeStyle = 'none' | 'dot' | 'closed' | 'angry';
 export type BrowStyle = 'none' | 'flat' | 'raised' | 'angry' | 'sad';
 export type NoseStyle = 'none' | 'dot' | 'curve';
@@ -40,14 +40,15 @@ export const BUILTIN_LAYER_LABELS: Record<BuiltinLayerId, string> = {
 };
 
 export const FACE_SHAPES: { id: FaceShape; label: string }[] = [
-  { id: 'round1', label: 'Round 1' },
-  { id: 'round2', label: 'Round 2' },
-  { id: 'oval1', label: 'Oval 1' },
+  { id: 'default', label: 'Default 1' },
+  { id: 'default2', label: 'Default 2' },
+  { id: 'round', label: 'Round' },
+  { id: 'square', label: 'Square' },
+  { id: 'oval', label: 'Oval 1' },
   { id: 'oval2', label: 'Oval 2' },
-  { id: 'square1', label: 'Square 1' },
-  { id: 'square2', label: 'Square 2' },
-  { id: 'long1', label: 'Long 1' },
-  { id: 'long2', label: 'Long 2' },
+  { id: 'long', label: 'Long 1' },
+  { id: 'long1', label: 'Long 2' },
+  { id: 'long2', label: 'Long 3' },
 ];
 
 export const EYE_STYLES: { id: EyeStyle; label: string }[] = [
@@ -121,7 +122,7 @@ type PortraitState = {
 let customCounter = 0;
 
 export const usePortrait = create<PortraitState>((set) => ({
-  face: 'round1',
+  face: 'default',
   eyeLeft: 'dot',
   eyeRight: 'dot',
   browLeft: 'none',
