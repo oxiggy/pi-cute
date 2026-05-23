@@ -3,7 +3,7 @@ import {
   usePortrait,
   type FaceShape,
   type EyeStyle,
-  type BrowsStyle,
+  type BrowStyle,
   type NoseStyle,
   type MouthStyle,
   type HairStyle,
@@ -28,11 +28,16 @@ import EyeClosedRight from '../assets/eye/closed/right.svg?react';
 import EyeAngryLeft from '../assets/eye/angry/left.svg?react';
 import EyeAngryRight from '../assets/eye/angry/right.svg?react';
 
-import BrowsNone from '../assets/brows/none.svg?react';
-import BrowsFlat from '../assets/brows/flat.svg?react';
-import BrowsRaised from '../assets/brows/raised.svg?react';
-import BrowsAngry from '../assets/brows/angry.svg?react';
-import BrowsSad from '../assets/brows/sad.svg?react';
+import BrowNoneLeft from '../assets/brow/none/left.svg?react';
+import BrowNoneRight from '../assets/brow/none/right.svg?react';
+import BrowFlatLeft from '../assets/brow/flat/left.svg?react';
+import BrowFlatRight from '../assets/brow/flat/right.svg?react';
+import BrowRaisedLeft from '../assets/brow/raised/left.svg?react';
+import BrowRaisedRight from '../assets/brow/raised/right.svg?react';
+import BrowAngryLeft from '../assets/brow/angry/left.svg?react';
+import BrowAngryRight from '../assets/brow/angry/right.svg?react';
+import BrowSadLeft from '../assets/brow/sad/left.svg?react';
+import BrowSadRight from '../assets/brow/sad/right.svg?react';
 
 import NoseNone from '../assets/nose/none.svg?react';
 import NoseDot from '../assets/nose/dot.svg?react';
@@ -69,8 +74,11 @@ const EYE_LEFT: Record<EyeStyle, SvgComp> = {
 const EYE_RIGHT: Record<EyeStyle, SvgComp> = {
   none: EyeNoneRight, dot: EyeDotRight, closed: EyeClosedRight, angry: EyeAngryRight,
 };
-const BROWS: Record<BrowsStyle, SvgComp> = {
-  none: BrowsNone, flat: BrowsFlat, raised: BrowsRaised, angry: BrowsAngry, sad: BrowsSad,
+const BROW_LEFT: Record<BrowStyle, SvgComp> = {
+  none: BrowNoneLeft, flat: BrowFlatLeft, raised: BrowRaisedLeft, angry: BrowAngryLeft, sad: BrowSadLeft,
+};
+const BROW_RIGHT: Record<BrowStyle, SvgComp> = {
+  none: BrowNoneRight, flat: BrowFlatRight, raised: BrowRaisedRight, angry: BrowAngryRight, sad: BrowSadRight,
 };
 const NOSE: Record<NoseStyle, SvgComp> = {
   none: NoseNone, dot: NoseDot, curve: NoseCurve,
@@ -90,14 +98,15 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
   useImperativeHandle(externalRef, () => svgRef.current!, []);
 
   const {
-    face, eyeLeft, eyeRight, brows, nose, mouth, hair, hairFill, skinTone,
+    face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth, hair, hairFill, skinTone,
     customLayers, setActiveLayer,
   } = usePortrait();
 
   const FaceSvg = FACE[face];
   const EyeLeftSvg = EYE_LEFT[eyeLeft];
   const EyeRightSvg = EYE_RIGHT[eyeRight];
-  const BrowsSvg = BROWS[brows];
+  const BrowLeftSvg = BROW_LEFT[browLeft];
+  const BrowRightSvg = BROW_RIGHT[browRight];
   const NoseSvg = NOSE[nose];
   const MouthSvg = MOUTH[mouth];
   const HairBackSvg = HAIR_BACK[hair];
@@ -140,8 +149,11 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
       <DraggableLayer id="eyeRight" svgRef={svgRef}>
         <EyeRightSvg width={128} height={128} />
       </DraggableLayer>
-      <DraggableLayer id="brows" svgRef={svgRef}>
-        <BrowsSvg width={128} height={128} />
+      <DraggableLayer id="browLeft" svgRef={svgRef}>
+        <BrowLeftSvg width={128} height={128} />
+      </DraggableLayer>
+      <DraggableLayer id="browRight" svgRef={svgRef}>
+        <BrowRightSvg width={128} height={128} />
       </DraggableLayer>
       <DraggableLayer id="nose" svgRef={svgRef}>
         <NoseSvg width={128} height={128} />

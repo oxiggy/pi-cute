@@ -6,7 +6,7 @@ export type FaceShape =
   | 'square1' | 'square2'
   | 'long1' | 'long2';
 export type EyeStyle = 'none' | 'dot' | 'closed' | 'angry';
-export type BrowsStyle = 'none' | 'flat' | 'raised' | 'angry' | 'sad';
+export type BrowStyle = 'none' | 'flat' | 'raised' | 'angry' | 'sad';
 export type NoseStyle = 'none' | 'dot' | 'curve';
 export type MouthStyle = 'none' | 'smile' | 'dot' | 'open' | 'flat';
 export type HairStyle = 'none' | 'short' | 'bob' | 'long' | 'ponytail';
@@ -26,14 +26,15 @@ export type CustomLayer = {
   name: string;
 };
 
-export const BUILTIN_LAYERS = ['hair', 'eyeLeft', 'eyeRight', 'brows', 'nose', 'mouth'] as const;
+export const BUILTIN_LAYERS = ['hair', 'eyeLeft', 'eyeRight', 'browLeft', 'browRight', 'nose', 'mouth'] as const;
 export type BuiltinLayerId = (typeof BUILTIN_LAYERS)[number];
 
 export const BUILTIN_LAYER_LABELS: Record<BuiltinLayerId, string> = {
   hair: 'Волосы',
   eyeLeft: 'Левый глаз',
   eyeRight: 'Правый глаз',
-  brows: 'Брови',
+  browLeft: 'Левая бровь',
+  browRight: 'Правая бровь',
   nose: 'Нос',
   mouth: 'Рот',
 };
@@ -56,7 +57,7 @@ export const EYE_STYLES: { id: EyeStyle; label: string }[] = [
   { id: 'none', label: 'None' },
 ];
 
-export const BROWS_STYLES: { id: BrowsStyle; label: string }[] = [
+export const BROW_STYLES: { id: BrowStyle; label: string }[] = [
   { id: 'none', label: 'None' },
   { id: 'flat', label: 'Flat' },
   { id: 'raised', label: 'Raised' },
@@ -90,7 +91,8 @@ type PortraitState = {
   face: FaceShape;
   eyeLeft: EyeStyle;
   eyeRight: EyeStyle;
-  brows: BrowsStyle;
+  browLeft: BrowStyle;
+  browRight: BrowStyle;
   nose: NoseStyle;
   mouth: MouthStyle;
   hair: HairStyle;
@@ -102,7 +104,8 @@ type PortraitState = {
   setFace: (face: FaceShape) => void;
   setEyeLeft: (eye: EyeStyle) => void;
   setEyeRight: (eye: EyeStyle) => void;
-  setBrows: (brows: BrowsStyle) => void;
+  setBrowLeft: (brow: BrowStyle) => void;
+  setBrowRight: (brow: BrowStyle) => void;
   setNose: (nose: NoseStyle) => void;
   setMouth: (mouth: MouthStyle) => void;
   setHair: (hair: HairStyle) => void;
@@ -121,7 +124,8 @@ export const usePortrait = create<PortraitState>((set) => ({
   face: 'round1',
   eyeLeft: 'dot',
   eyeRight: 'dot',
-  brows: 'none',
+  browLeft: 'none',
+  browRight: 'none',
   nose: 'none',
   mouth: 'smile',
   hair: 'short',
@@ -132,7 +136,8 @@ export const usePortrait = create<PortraitState>((set) => ({
     hair: { ...DEFAULT_TRANSFORM },
     eyeLeft: { ...DEFAULT_TRANSFORM },
     eyeRight: { ...DEFAULT_TRANSFORM },
-    brows: { ...DEFAULT_TRANSFORM },
+    browLeft: { ...DEFAULT_TRANSFORM },
+    browRight: { ...DEFAULT_TRANSFORM },
     nose: { ...DEFAULT_TRANSFORM },
     mouth: { ...DEFAULT_TRANSFORM },
   },
@@ -140,7 +145,8 @@ export const usePortrait = create<PortraitState>((set) => ({
   setFace: (face) => set({ face }),
   setEyeLeft: (eyeLeft) => set({ eyeLeft }),
   setEyeRight: (eyeRight) => set({ eyeRight }),
-  setBrows: (brows) => set({ brows }),
+  setBrowLeft: (browLeft) => set({ browLeft }),
+  setBrowRight: (browRight) => set({ browRight }),
   setNose: (nose) => set({ nose }),
   setMouth: (mouth) => set({ mouth }),
   setHair: (hair) => set({ hair }),

@@ -3,7 +3,7 @@ import {
   usePortrait,
   FACE_SHAPES,
   EYE_STYLES,
-  BROWS_STYLES,
+  BROW_STYLES,
   NOSE_STYLES,
   MOUTH_STYLES,
   HAIR_STYLES,
@@ -16,9 +16,9 @@ type Props = { onExport: () => void };
 
 export function Controls({ onExport }: Props) {
   const {
-    face, eyeLeft, eyeRight, brows, nose, mouth, hair, hairFill, skinTone,
+    face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth, hair, hairFill, skinTone,
     customLayers, transforms, activeLayer,
-    setFace, setEyeLeft, setEyeRight, setBrows, setNose, setMouth, setHair, setHairFill,
+    setFace, setEyeLeft, setEyeRight, setBrowLeft, setBrowRight, setNose, setMouth, setHair, setHairFill,
     setSkinTone, addCustomLayer, removeCustomLayer,
     setActiveLayer, setTransform, resetTransform,
   } = usePortrait();
@@ -144,13 +144,28 @@ export function Controls({ onExport }: Props) {
       </div>
 
       <div className="control-group">
-        <label>Брови</label>
+        <label>Левая бровь</label>
         <div className="shape-grid">
-          {BROWS_STYLES.map((s) => (
+          {BROW_STYLES.map((s) => (
             <button
               key={s.id}
-              className={`shape-btn ${brows === s.id ? 'active' : ''}`}
-              onClick={() => setBrows(s.id)}
+              className={`shape-btn ${browLeft === s.id ? 'active' : ''}`}
+              onClick={() => setBrowLeft(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="control-group">
+        <label>Правая бровь</label>
+        <div className="shape-grid">
+          {BROW_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${browRight === s.id ? 'active' : ''}`}
+              onClick={() => setBrowRight(s.id)}
             >
               {s.label}
             </button>
