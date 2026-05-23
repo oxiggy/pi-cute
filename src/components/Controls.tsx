@@ -1,10 +1,20 @@
 import { type ChangeEvent } from 'react';
-import { usePortrait, FACE_SHAPES } from '../store/portrait';
+import {
+  usePortrait,
+  FACE_SHAPES,
+  EYES_STYLES,
+  BROWS_STYLES,
+  NOSE_STYLES,
+  MOUTH_STYLES,
+} from '../store/portrait';
 
 type Props = { onExport: () => void };
 
 export function Controls({ onExport }: Props) {
-  const { face, skinTone, userImage, setFace, setSkinTone, setUserImage } = usePortrait();
+  const {
+    face, eyes, brows, nose, mouth, skinTone, userImage,
+    setFace, setEyes, setBrows, setNose, setMouth, setSkinTone, setUserImage,
+  } = usePortrait();
 
   function handleFile(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -24,6 +34,66 @@ export function Controls({ onExport }: Props) {
               key={s.id}
               className={`shape-btn ${face === s.id ? 'active' : ''}`}
               onClick={() => setFace(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="control-group">
+        <label>Глаза</label>
+        <div className="shape-grid">
+          {EYES_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${eyes === s.id ? 'active' : ''}`}
+              onClick={() => setEyes(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="control-group">
+        <label>Брови</label>
+        <div className="shape-grid">
+          {BROWS_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${brows === s.id ? 'active' : ''}`}
+              onClick={() => setBrows(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="control-group">
+        <label>Нос</label>
+        <div className="shape-grid">
+          {NOSE_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${nose === s.id ? 'active' : ''}`}
+              onClick={() => setNose(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="control-group">
+        <label>Рот</label>
+        <div className="shape-grid">
+          {MOUTH_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${mouth === s.id ? 'active' : ''}`}
+              onClick={() => setMouth(s.id)}
             >
               {s.label}
             </button>
