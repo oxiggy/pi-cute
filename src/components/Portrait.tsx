@@ -1,6 +1,7 @@
 import { forwardRef, type CSSProperties } from 'react';
 import {
   usePortrait,
+  transformToString,
   type FaceShape,
   type EyesStyle,
   type BrowsStyle,
@@ -103,7 +104,8 @@ const HAIR_FRONT: Record<HairStyle, SvgComp> = {
 };
 
 export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
-  const { face, eyes, brows, nose, mouth, hair, hairFill, skinTone, userImage } = usePortrait();
+  const { face, eyes, brows, nose, mouth, hair, hairFill, skinTone, userImage, transforms } =
+    usePortrait();
 
   const FaceSvg = FACE[face];
   const EyesSvg = EYES[eyes];
@@ -117,6 +119,8 @@ export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
     hairFill.type === 'solid'
       ? ({ ['--hair-fill' as string]: hairFill.color } as CSSProperties)
       : ({ ['--hair-fill' as string]: 'url(#hair-gradient)' } as CSSProperties);
+
+  const hairTransform = transformToString(transforms.hair);
 
   return (
     <svg
@@ -134,7 +138,7 @@ export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
         </defs>
       )}
 
-      <g style={hairStyle}>
+      <g transform={hairTransform} style={hairStyle}>
         <HairBackSvg width={128} height={128} />
       </g>
 
@@ -142,24 +146,34 @@ export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
         <FaceSvg width={128} height={128} />
       </g>
 
-      <EyesSvg width={128} height={128} />
-      <BrowsSvg width={128} height={128} />
-      <NoseSvg width={128} height={128} />
-      <MouthSvg width={128} height={128} />
+      <g transform={transformToString(transforms.eyes)}>
+        <EyesSvg width={128} height={128} />
+      </g>
+      <g transform={transformToString(transforms.brows)}>
+        <BrowsSvg width={128} height={128} />
+      </g>
+      <g transform={transformToString(transforms.nose)}>
+        <NoseSvg width={128} height={128} />
+      </g>
+      <g transform={transformToString(transforms.mouth)}>
+        <MouthSvg width={128} height={128} />
+      </g>
 
-      <g style={hairStyle}>
+      <g transform={hairTransform} style={hairStyle}>
         <HairFrontSvg width={128} height={128} />
       </g>
 
       {userImage && (
-        <image
-          href={userImage}
-          x={32}
-          y={32}
-          width={64}
-          height={64}
-          preserveAspectRatio="xMidYMid slice"
-        />
+        <g transform={transformToString(transforms.userImage)}>
+          <image
+            href={userImage}
+            x={32}
+            y={32}
+            width={64}
+            height={64}
+            preserveAspectRatio="xMidYMid slice"
+          />
+        </g>
       )}
     </svg>
   );

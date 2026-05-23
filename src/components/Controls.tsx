@@ -1,4 +1,4 @@
-import { type ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import {
   usePortrait,
   FACE_SHAPES,
@@ -7,6 +7,8 @@ import {
   NOSE_STYLES,
   MOUTH_STYLES,
   HAIR_STYLES,
+  LAYER_LABELS,
+  type TransformableLayer,
 } from '../store/portrait';
 
 type Props = { onExport: () => void };
@@ -14,9 +16,13 @@ type Props = { onExport: () => void };
 export function Controls({ onExport }: Props) {
   const {
     face, eyes, brows, nose, mouth, hair, hairFill, skinTone, userImage,
+    transforms,
     setFace, setEyes, setBrows, setNose, setMouth, setHair, setHairFill,
-    setSkinTone, setUserImage,
+    setSkinTone, setUserImage, setTransform, resetTransform,
   } = usePortrait();
+
+  const [activeLayer, setActiveLayer] = useState<TransformableLayer>('hair');
+  const t = transforms[activeLayer];
 
   function handleFile(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -54,6 +60,7 @@ export function Controls({ onExport }: Props) {
           {HAIR_STYLES.map((s) => (
             <button
               key={s.id}
+              data-hair={s.id}
               className={`shape-btn ${hair === s.id ? 'active' : ''}`}
               onClick={() => setHair(s.id)}
             >
@@ -180,6 +187,55 @@ export function Controls({ onExport }: Props) {
             Убрать
           </button>
         )}
+      </div>
+
+      <div className="control-group">
+        <label>Расположение слоя</label>
+        <select
+          className="layer-select"
+          value={activeLayer}
+          onChange={(e) => setActiveLayer(e.target.value as TransformableLayer)}
+        >
+          {LAYER_LABELS.map((l) => (
+            <option key={l.id} value={l.id}>{l.label}</option>
+          ))}
+        </select>
+
+        <div className="slider-row">
+          <span>X</span>
+          <input
+            type="range" min={-40} max={40} step={0.5} value={t.x}
+            onChange={(e) => setTransform(activeLayer, { x: Number(e.target.value) })}
+          />
+          <span className="slider-val">{t.x.toFixed(1)}</span>
+        </div>
+        <div className="slider-row">
+          <span>Y</span>
+          <input
+            type="range" min={-40} max={40} step={0.5} value={t.y}
+            onChange={(e) => setTransform(activeLayer, { y: Number(e.target.value) })}
+          />
+          <span className="slider-val">{t.y.toFixed(1)}</span>
+        </div>
+        <div className="slider-row">
+          <span>S</span>
+          <input
+            type="range" min={0.3} max={2} step={0.05} value={t.scale}
+            onChange={(e) => setTransform(activeLayer, { scale: Number(e.target.value) })}
+          />
+          <span className="slider-val">{t.scale.toFixed(2)}</span>
+        </div>
+        <div className="slider-row">
+          <span>R</span>
+          <input
+            type="range" min={-180} max={180} step={1} value={t.rotation}
+            onChange={(e) => setTransform(activeLayer, { rotation: Number(e.target.value) })}
+          />
+          <span className="slider-val">{t.rotation}°</span>
+        </div>
+        <button className="shape-btn" onClick={() => resetTransform(activeLayer)}>
+          Сбросить
+        </button>
       </div>
 
       <button className="btn" onClick={onExport}>
