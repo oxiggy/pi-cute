@@ -10,16 +10,18 @@ import {
   BUILTIN_LAYERS,
   BUILTIN_LAYER_LABELS,
   DEFAULT_TRANSFORM,
+  type PaintableLayerId,
 } from '../store/portrait';
+import { LayerSection } from './LayerSection';
 
 type Props = { onExport: () => void };
 
 export function Controls({ onExport }: Props) {
   const {
-    face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth, hair, hairFill, skinTone,
-    customLayers, transforms, activeLayer,
-    setFace, setEyeLeft, setEyeRight, setBrowLeft, setBrowRight, setNose, setMouth, setHair, setHairFill,
-    setSkinTone, addCustomLayer, removeCustomLayer,
+    face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth, hair,
+    layerColors, customLayers, transforms, activeLayer,
+    setFace, setEyeLeft, setEyeRight, setBrowLeft, setBrowRight, setNose, setMouth, setHair,
+    setLayerColor, addCustomLayer, removeCustomLayer,
     setActiveLayer, setTransform, resetTransform,
   } = usePortrait();
 
@@ -27,23 +29,22 @@ export function Controls({ onExport }: Props) {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
-      addCustomLayer(reader.result as string, file.name);
-    };
+    reader.onload = () => addCustomLayer(reader.result as string, file.name);
     reader.readAsDataURL(file);
     e.target.value = '';
   }
 
-  const solidColor = hairFill.type === 'solid' ? hairFill.color : '#4a3020';
-  const gradFrom = hairFill.type === 'gradient' ? hairFill.from : '#7a4a2a';
-  const gradTo = hairFill.type === 'gradient' ? hairFill.to : '#2a1810';
+  // Helper to bind a paintable layer's fill to LayerSection props.
+  const fillProps = (id: PaintableLayerId) => ({
+    fill: layerColors[id],
+    onFillChange: (f: typeof layerColors[PaintableLayerId]) => setLayerColor(id, f),
+  });
 
   const t = activeLayer ? transforms[activeLayer] ?? DEFAULT_TRANSFORM : null;
 
   return (
     <aside className="controls">
-      <div className="control-group">
-        <label>Форма лица</label>
+      <LayerSection title="Лицо" {...fillProps('face')}>
         <div className="shape-grid">
           {FACE_SHAPES.map((s) => (
             <button
@@ -55,10 +56,9 @@ export function Controls({ onExport }: Props) {
             </button>
           ))}
         </div>
-      </div>
+      </LayerSection>
 
-      <div className="control-group">
-        <label>Причёска</label>
+      <LayerSection title="Волосы" {...fillProps('hair')}>
         <div className="shape-grid">
           {HAIR_STYLES.map((s) => (
             <button
@@ -71,50 +71,9 @@ export function Controls({ onExport }: Props) {
             </button>
           ))}
         </div>
-      </div>
+      </LayerSection>
 
-      <div className="control-group">
-        <label>Цвет волос</label>
-        <div className="shape-grid">
-          <button
-            className={`shape-btn ${hairFill.type === 'solid' ? 'active' : ''}`}
-            onClick={() => setHairFill({ type: 'solid', color: solidColor })}
-          >
-            Заливка
-          </button>
-          <button
-            className={`shape-btn ${hairFill.type === 'gradient' ? 'active' : ''}`}
-            onClick={() => setHairFill({ type: 'gradient', from: gradFrom, to: gradTo })}
-          >
-            Градиент
-          </button>
-        </div>
-        {hairFill.type === 'solid' ? (
-          <input
-            type="color"
-            value={hairFill.color}
-            onChange={(e) => setHairFill({ type: 'solid', color: e.target.value })}
-          />
-        ) : (
-          <div className="grad-pickers">
-            <input
-              type="color"
-              value={hairFill.from}
-              onChange={(e) => setHairFill({ type: 'gradient', from: e.target.value, to: hairFill.to })}
-              title="Верх"
-            />
-            <input
-              type="color"
-              value={hairFill.to}
-              onChange={(e) => setHairFill({ type: 'gradient', from: hairFill.from, to: e.target.value })}
-              title="Низ"
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="control-group">
-        <label>Левый глаз</label>
+      <LayerSection title="Левый глаз" {...fillProps('eyeLeft')}>
         <div className="shape-grid">
           {EYE_STYLES.map((s) => (
             <button
@@ -126,10 +85,9 @@ export function Controls({ onExport }: Props) {
             </button>
           ))}
         </div>
-      </div>
+      </LayerSection>
 
-      <div className="control-group">
-        <label>Правый глаз</label>
+      <LayerSection title="Правый глаз" {...fillProps('eyeRight')}>
         <div className="shape-grid">
           {EYE_STYLES.map((s) => (
             <button
@@ -141,10 +99,9 @@ export function Controls({ onExport }: Props) {
             </button>
           ))}
         </div>
-      </div>
+      </LayerSection>
 
-      <div className="control-group">
-        <label>Левая бровь</label>
+      <LayerSection title="Левая бровь" {...fillProps('browLeft')}>
         <div className="shape-grid">
           {BROW_STYLES.map((s) => (
             <button
@@ -156,10 +113,9 @@ export function Controls({ onExport }: Props) {
             </button>
           ))}
         </div>
-      </div>
+      </LayerSection>
 
-      <div className="control-group">
-        <label>Правая бровь</label>
+      <LayerSection title="Правая бровь" {...fillProps('browRight')}>
         <div className="shape-grid">
           {BROW_STYLES.map((s) => (
             <button
@@ -171,10 +127,9 @@ export function Controls({ onExport }: Props) {
             </button>
           ))}
         </div>
-      </div>
+      </LayerSection>
 
-      <div className="control-group">
-        <label>Нос</label>
+      <LayerSection title="Нос" {...fillProps('nose')}>
         <div className="shape-grid">
           {NOSE_STYLES.map((s) => (
             <button
@@ -186,10 +141,9 @@ export function Controls({ onExport }: Props) {
             </button>
           ))}
         </div>
-      </div>
+      </LayerSection>
 
-      <div className="control-group">
-        <label>Рот</label>
+      <LayerSection title="Рот" {...fillProps('mouth')}>
         <div className="shape-grid">
           {MOUTH_STYLES.map((s) => (
             <button
@@ -201,19 +155,9 @@ export function Controls({ onExport }: Props) {
             </button>
           ))}
         </div>
-      </div>
+      </LayerSection>
 
-      <div className="control-group">
-        <label>Цвет кожи</label>
-        <input
-          type="color"
-          value={skinTone}
-          onChange={(e) => setSkinTone(e.target.value)}
-        />
-      </div>
-
-      <div className="control-group">
-        <label>Кастомные слои</label>
+      <LayerSection title="Кастомные слои">
         <input type="file" accept="image/*" onChange={handleFile} />
         {customLayers.length > 0 && (
           <ul className="custom-layers">
@@ -233,10 +177,9 @@ export function Controls({ onExport }: Props) {
             ))}
           </ul>
         )}
-      </div>
+      </LayerSection>
 
-      <div className="control-group">
-        <label>Выбранный слой</label>
+      <LayerSection title="Выбранный слой">
         {activeLayer && t ? (
           <>
             <div className="active-layer-name">
@@ -282,7 +225,7 @@ export function Controls({ onExport }: Props) {
           </>
         ) : (
           <div className="hint">
-            Кликни по слою на портрете или выбери из списка ниже:
+            Кликни по слою на портрете или выбери из списка:
             <div className="shape-grid" style={{ marginTop: 8 }}>
               {BUILTIN_LAYERS.map((id) => (
                 <button
@@ -296,7 +239,7 @@ export function Controls({ onExport }: Props) {
             </div>
           </div>
         )}
-      </div>
+      </LayerSection>
 
       <button className="btn" onClick={onExport}>
         Скачать PNG

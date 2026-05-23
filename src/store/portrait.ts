@@ -11,20 +11,21 @@ export type NoseStyle = 'none' | 'dot' | 'curve';
 export type MouthStyle = 'none' | 'smile' | 'dot' | 'open' | 'flat';
 export type HairStyle = 'none' | 'short' | 'bob' | 'long' | 'ponytail';
 
-export type HairFill =
+/** Fill for any layer — either solid or two-stop linear gradient with angle (deg). */
+export type LayerFill =
   | { type: 'solid'; color: string }
-  | { type: 'gradient'; from: string; to: string };
+  | { type: 'gradient'; from: string; to: string; angle: number };
 
 export type LayerTransform = { x: number; y: number; scale: number; rotation: number };
-
 export const DEFAULT_TRANSFORM: LayerTransform = { x: 0, y: 0, scale: 1, rotation: 0 };
 
-export type CustomLayer = {
-  id: string;
-  type: 'image';
-  src: string;
-  name: string;
-};
+export type CustomLayer = { id: string; type: 'image'; src: string; name: string };
+
+/** Visual layers that can have fill + style + transform. */
+export const PAINTABLE_LAYERS = [
+  'face', 'hair', 'eyeLeft', 'eyeRight', 'browLeft', 'browRight', 'nose', 'mouth',
+] as const;
+export type PaintableLayerId = (typeof PAINTABLE_LAYERS)[number];
 
 export const BUILTIN_LAYERS = ['hair', 'eyeLeft', 'eyeRight', 'browLeft', 'browRight', 'nose', 'mouth'] as const;
 export type BuiltinLayerId = (typeof BUILTIN_LAYERS)[number];
@@ -88,6 +89,19 @@ export const HAIR_STYLES: { id: HairStyle; label: string }[] = [
   { id: 'ponytail', label: 'Ponytail' },
 ];
 
+const solid = (color: string): LayerFill => ({ type: 'solid', color });
+
+const DEFAULT_LAYER_COLORS: Record<PaintableLayerId, LayerFill> = {
+  face: solid('#f0c8a0'),
+  hair: solid('#4a3020'),
+  eyeLeft: solid('#222222'),
+  eyeRight: solid('#222222'),
+  browLeft: solid('#222222'),
+  browRight: solid('#222222'),
+  nose: solid('#000000'),
+  mouth: solid('#5a2a2a'),
+};
+
 type PortraitState = {
   face: FaceShape;
   eyeLeft: EyeStyle;
@@ -97,11 +111,13 @@ type PortraitState = {
   nose: NoseStyle;
   mouth: MouthStyle;
   hair: HairStyle;
-  hairFill: HairFill;
-  skinTone: string;
+
+  layerColors: Record<PaintableLayerId, LayerFill>;
+
   customLayers: CustomLayer[];
   transforms: Record<string, LayerTransform>;
   activeLayer: string | null;
+
   setFace: (face: FaceShape) => void;
   setEyeLeft: (eye: EyeStyle) => void;
   setEyeRight: (eye: EyeStyle) => void;
@@ -110,8 +126,9 @@ type PortraitState = {
   setNose: (nose: NoseStyle) => void;
   setMouth: (mouth: MouthStyle) => void;
   setHair: (hair: HairStyle) => void;
-  setHairFill: (fill: HairFill) => void;
-  setSkinTone: (color: string) => void;
+
+  setLayerColor: (id: PaintableLayerId, fill: LayerFill) => void;
+
   addCustomLayer: (src: string, name: string) => string;
   removeCustomLayer: (id: string) => void;
   setActiveLayer: (id: string | null) => void;
@@ -130,8 +147,9 @@ export const usePortrait = create<PortraitState>((set) => ({
   nose: 'none',
   mouth: 'smile',
   hair: 'short',
-  hairFill: { type: 'solid', color: '#4a3020' },
-  skinTone: '#f0c8a0',
+
+  layerColors: DEFAULT_LAYER_COLORS,
+
   customLayers: [],
   transforms: {
     hair: { ...DEFAULT_TRANSFORM },
@@ -143,6 +161,7 @@ export const usePortrait = create<PortraitState>((set) => ({
     mouth: { ...DEFAULT_TRANSFORM },
   },
   activeLayer: null,
+
   setFace: (face) => set({ face }),
   setEyeLeft: (eyeLeft) => set({ eyeLeft }),
   setEyeRight: (eyeRight) => set({ eyeRight }),
@@ -151,8 +170,10 @@ export const usePortrait = create<PortraitState>((set) => ({
   setNose: (nose) => set({ nose }),
   setMouth: (mouth) => set({ mouth }),
   setHair: (hair) => set({ hair }),
-  setHairFill: (hairFill) => set({ hairFill }),
-  setSkinTone: (skinTone) => set({ skinTone }),
+
+  setLayerColor: (id, fill) =>
+    set((s) => ({ layerColors: { ...s.layerColors, [id]: fill } })),
+
   addCustomLayer: (src, name) => {
     const id = `custom-${++customCounter}`;
     set((s) => ({
@@ -191,4 +212,19 @@ export function transformToString(t: LayerTransform | undefined): string {
   const cx = 64;
   const cy = 64;
   return `translate(${cx + tr.x} ${cy + tr.y}) rotate(${tr.rotation}) scale(${tr.scale}) translate(${-cx} ${-cy})`;
+}
+
+/** Convert a fill spec to a CSS value (color string or url(#...)) for use as --layer-fill. */
+export function fillToCssValue(fill: LayerFill, gradientId: string): string {
+  return fill.type === 'solid' ? fill.color : `url(#${gradientId})`;
+}
+
+/** Compute SVG linearGradient endpoints (x1,y1,x2,y2 in 0..1) from an angle in degrees.
+ *  0° = left→right, 90° = top→bottom, increasing clockwise. */
+export function angleToGradientCoords(angleDeg: number) {
+  const rad = (angleDeg * Math.PI) / 180;
+  const cx = 0.5, cy = 0.5;
+  const dx = Math.cos(rad) / 2;
+  const dy = Math.sin(rad) / 2;
+  return { x1: cx - dx, y1: cy - dy, x2: cx + dx, y2: cy + dy };
 }

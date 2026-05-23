@@ -44,6 +44,47 @@ html, body, #root {
 .control-group { display: flex; flex-direction: column; gap: 8px; }
 .control-group label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: #8a8a95; }
 
+/* --- LayerSection accordion --- */
+.layer-section {
+  border: 1px solid #2c2d36;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1d1e26;
+  flex-shrink: 0;
+}
+.layer-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #232430;
+  border: none;
+  color: #e8e8ea;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+.layer-header:hover { background: #2a2b38; }
+.layer-section.is-closed .layer-header { background: #1d1e26; }
+.layer-title { letter-spacing: 0.02em; }
+.layer-chevron { font-size: 11px; color: #8a8a95; }
+.layer-body { display: flex; flex-direction: column; gap: 10px; padding: 10px 12px 12px; }
+
+.fill-picker { display: flex; flex-direction: column; gap: 8px; }
+.fill-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.fill-mode .shape-btn { padding: 6px; font-size: 12px; }
+
+/* --- Universal layer painting --- */
+/* Any element inside a .layer-paint group that has an explicit fill (not "none")
+   gets repainted with the layer's --layer-fill. Same for stroke. */
+.layer-paint *[fill]:not([fill="none"]) {
+  fill: var(--layer-fill);
+}
+.layer-paint *[stroke]:not([stroke="none"]) {
+  stroke: var(--layer-fill);
+}
+
 .shape-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .shape-btn {
   background: #2c2d36;

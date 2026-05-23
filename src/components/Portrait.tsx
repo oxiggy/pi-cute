@@ -1,12 +1,17 @@
 import { forwardRef, useRef, useImperativeHandle, type CSSProperties } from 'react';
 import {
   usePortrait,
+  fillToCssValue,
+  angleToGradientCoords,
+  PAINTABLE_LAYERS,
   type FaceShape,
   type EyeStyle,
   type BrowStyle,
   type NoseStyle,
   type MouthStyle,
   type HairStyle,
+  type PaintableLayerId,
+  type LayerFill,
 } from '../store/portrait';
 import { DraggableLayer } from './DraggableLayer';
 
@@ -94,13 +99,21 @@ const HAIR_FRONT: Record<HairStyle, SvgComp> = {
   none: HairNoneFront, short: HairShortFront, bob: HairBobFront, long: HairLongFront, ponytail: HairPonytailFront,
 };
 
+function gradientId(layerId: PaintableLayerId) {
+  return `grad-${layerId}`;
+}
+
+function paintStyle(fill: LayerFill, layerId: PaintableLayerId): CSSProperties {
+  return { ['--layer-fill' as string]: fillToCssValue(fill, gradientId(layerId)) } as CSSProperties;
+}
+
 export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
   const svgRef = useRef<SVGSVGElement>(null);
   useImperativeHandle(externalRef, () => svgRef.current!, []);
 
   const {
-    face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth, hair, hairFill, skinTone,
-    customLayers, setActiveLayer,
+    face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth, hair,
+    layerColors, customLayers, setActiveLayer,
   } = usePortrait();
 
   const FaceSvg = FACE[face];
@@ -113,11 +126,6 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
   const HairBackSvg = HAIR_BACK[hair];
   const HairFrontSvg = HAIR_FRONT[hair];
 
-  const hairFillStyle: CSSProperties =
-    hairFill.type === 'solid'
-      ? ({ ['--hair-fill' as string]: hairFill.color } as CSSProperties)
-      : ({ ['--hair-fill' as string]: 'url(#hair-gradient)' } as CSSProperties);
-
   return (
     <svg
       ref={svgRef}
@@ -126,45 +134,67 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
       xmlns="http://www.w3.org/2000/svg"
       onPointerDown={() => setActiveLayer(null)}
     >
-      {hairFill.type === 'gradient' && (
-        <defs>
-          <linearGradient id="hair-gradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={hairFill.from} />
-            <stop offset="100%" stopColor={hairFill.to} />
-          </linearGradient>
-        </defs>
-      )}
+      <defs>
+        {PAINTABLE_LAYERS.map((id) => {
+          const f = layerColors[id];
+          if (f.type !== 'gradient') return null;
+          const c = angleToGradientCoords(f.angle);
+          return (
+            <linearGradient key={id} id={gradientId(id)} x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2}>
+              <stop offset="0%" stopColor={f.from} />
+              <stop offset="100%" stopColor={f.to} />
+            </linearGradient>
+          );
+        })}
+      </defs>
 
-      {/* Hair-back uses the same transform as hair-front (single "hair" layer). */}
-      <DraggableLayer id="hair" svgRef={svgRef} contentStyle={hairFillStyle}>
-        <HairBackSvg width={128} height={128} />
+      {/* Hair-back (shares hair fill). */}
+      <DraggableLayer id="hair" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.hair, 'hair')}>
+          <HairBackSvg width={128} height={128} />
+        </g>
       </DraggableLayer>
 
-      <g style={{ color: skinTone }}>
+      {/* Face — not draggable, but painted via the same mechanism. */}
+      <g className="layer-paint" style={paintStyle(layerColors.face, 'face')}>
         <FaceSvg width={128} height={128} />
       </g>
 
       <DraggableLayer id="eyeLeft" svgRef={svgRef}>
-        <EyeLeftSvg width={128} height={128} />
+        <g className="layer-paint" style={paintStyle(layerColors.eyeLeft, 'eyeLeft')}>
+          <EyeLeftSvg width={128} height={128} />
+        </g>
       </DraggableLayer>
       <DraggableLayer id="eyeRight" svgRef={svgRef}>
-        <EyeRightSvg width={128} height={128} />
+        <g className="layer-paint" style={paintStyle(layerColors.eyeRight, 'eyeRight')}>
+          <EyeRightSvg width={128} height={128} />
+        </g>
       </DraggableLayer>
       <DraggableLayer id="browLeft" svgRef={svgRef}>
-        <BrowLeftSvg width={128} height={128} />
+        <g className="layer-paint" style={paintStyle(layerColors.browLeft, 'browLeft')}>
+          <BrowLeftSvg width={128} height={128} />
+        </g>
       </DraggableLayer>
       <DraggableLayer id="browRight" svgRef={svgRef}>
-        <BrowRightSvg width={128} height={128} />
+        <g className="layer-paint" style={paintStyle(layerColors.browRight, 'browRight')}>
+          <BrowRightSvg width={128} height={128} />
+        </g>
       </DraggableLayer>
       <DraggableLayer id="nose" svgRef={svgRef}>
-        <NoseSvg width={128} height={128} />
+        <g className="layer-paint" style={paintStyle(layerColors.nose, 'nose')}>
+          <NoseSvg width={128} height={128} />
+        </g>
       </DraggableLayer>
       <DraggableLayer id="mouth" svgRef={svgRef}>
-        <MouthSvg width={128} height={128} />
+        <g className="layer-paint" style={paintStyle(layerColors.mouth, 'mouth')}>
+          <MouthSvg width={128} height={128} />
+        </g>
       </DraggableLayer>
 
-      <DraggableLayer id="hair" svgRef={svgRef} contentStyle={hairFillStyle}>
-        <HairFrontSvg width={128} height={128} />
+      <DraggableLayer id="hair" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.hair, 'hair')}>
+          <HairFrontSvg width={128} height={128} />
+        </g>
       </DraggableLayer>
 
       {customLayers.map((layer) => (

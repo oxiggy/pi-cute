@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/components/controls.tsx","./src/components/draggablelayer.tsx","./src/components/portrait.tsx","./src/lib/exportpng.ts","./src/store/portrait.ts"],"version":"5.9.3"}
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/controls.tsx","./src/components/draggablelayer.tsx","./src/components/fillpicker.tsx","./src/components/layersection.tsx","./src/components/portrait.tsx","./src/lib/exportpng.ts","./src/store/portrait.ts"],"version":"5.9.3"}
