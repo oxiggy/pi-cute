@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react';
+import { type ChangeEvent } from 'react';
 import {
   usePortrait,
   FACE_SHAPES,
@@ -7,35 +7,38 @@ import {
   NOSE_STYLES,
   MOUTH_STYLES,
   HAIR_STYLES,
-  LAYER_LABELS,
-  type TransformableLayer,
+  BUILTIN_LAYERS,
+  BUILTIN_LAYER_LABELS,
+  DEFAULT_TRANSFORM,
 } from '../store/portrait';
 
 type Props = { onExport: () => void };
 
 export function Controls({ onExport }: Props) {
   const {
-    face, eyes, brows, nose, mouth, hair, hairFill, skinTone, userImage,
-    transforms,
+    face, eyes, brows, nose, mouth, hair, hairFill, skinTone,
+    customLayers, transforms, activeLayer,
     setFace, setEyes, setBrows, setNose, setMouth, setHair, setHairFill,
-    setSkinTone, setUserImage, setTransform, resetTransform,
+    setSkinTone, addCustomLayer, removeCustomLayer,
+    setActiveLayer, setTransform, resetTransform,
   } = usePortrait();
-
-  const [activeLayer, setActiveLayer] = useState<TransformableLayer>('hair');
-  const t = transforms[activeLayer];
 
   function handleFile(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => setUserImage(reader.result as string);
+    reader.onload = () => {
+      addCustomLayer(reader.result as string, file.name);
+    };
     reader.readAsDataURL(file);
+    e.target.value = '';
   }
 
-  // For the gradient pickers we keep stable defaults when toggling modes.
   const solidColor = hairFill.type === 'solid' ? hairFill.color : '#4a3020';
   const gradFrom = hairFill.type === 'gradient' ? hairFill.from : '#7a4a2a';
   const gradTo = hairFill.type === 'gradient' ? hairFill.to : '#2a1810';
+
+  const t = activeLayer ? transforms[activeLayer] ?? DEFAULT_TRANSFORM : null;
 
   return (
     <aside className="controls">
@@ -180,62 +183,89 @@ export function Controls({ onExport }: Props) {
       </div>
 
       <div className="control-group">
-        <label>Своя картинка</label>
+        <label>Кастомные слои</label>
         <input type="file" accept="image/*" onChange={handleFile} />
-        {userImage && (
-          <button className="shape-btn" onClick={() => setUserImage(null)}>
-            Убрать
-          </button>
+        {customLayers.length > 0 && (
+          <ul className="custom-layers">
+            {customLayers.map((layer) => (
+              <li
+                key={layer.id}
+                className={activeLayer === layer.id ? 'active' : ''}
+                onClick={() => setActiveLayer(layer.id)}
+              >
+                <span className="layer-name">{layer.name}</span>
+                <button
+                  className="icon-btn"
+                  onClick={(e) => { e.stopPropagation(); removeCustomLayer(layer.id); }}
+                  title="Удалить"
+                >×</button>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 
       <div className="control-group">
-        <label>Расположение слоя</label>
-        <select
-          className="layer-select"
-          value={activeLayer}
-          onChange={(e) => setActiveLayer(e.target.value as TransformableLayer)}
-        >
-          {LAYER_LABELS.map((l) => (
-            <option key={l.id} value={l.id}>{l.label}</option>
-          ))}
-        </select>
-
-        <div className="slider-row">
-          <span>X</span>
-          <input
-            type="range" min={-40} max={40} step={0.5} value={t.x}
-            onChange={(e) => setTransform(activeLayer, { x: Number(e.target.value) })}
-          />
-          <span className="slider-val">{t.x.toFixed(1)}</span>
-        </div>
-        <div className="slider-row">
-          <span>Y</span>
-          <input
-            type="range" min={-40} max={40} step={0.5} value={t.y}
-            onChange={(e) => setTransform(activeLayer, { y: Number(e.target.value) })}
-          />
-          <span className="slider-val">{t.y.toFixed(1)}</span>
-        </div>
-        <div className="slider-row">
-          <span>S</span>
-          <input
-            type="range" min={0.3} max={2} step={0.05} value={t.scale}
-            onChange={(e) => setTransform(activeLayer, { scale: Number(e.target.value) })}
-          />
-          <span className="slider-val">{t.scale.toFixed(2)}</span>
-        </div>
-        <div className="slider-row">
-          <span>R</span>
-          <input
-            type="range" min={-180} max={180} step={1} value={t.rotation}
-            onChange={(e) => setTransform(activeLayer, { rotation: Number(e.target.value) })}
-          />
-          <span className="slider-val">{t.rotation}°</span>
-        </div>
-        <button className="shape-btn" onClick={() => resetTransform(activeLayer)}>
-          Сбросить
-        </button>
+        <label>Выбранный слой</label>
+        {activeLayer && t ? (
+          <>
+            <div className="active-layer-name">
+              {(BUILTIN_LAYER_LABELS as Record<string, string>)[activeLayer] ??
+                customLayers.find((l) => l.id === activeLayer)?.name ??
+                activeLayer}
+            </div>
+            <div className="slider-row">
+              <span>X</span>
+              <input
+                type="range" min={-60} max={60} step={0.5} value={t.x}
+                onChange={(e) => setTransform(activeLayer, { x: Number(e.target.value) })}
+              />
+              <span className="slider-val">{t.x.toFixed(1)}</span>
+            </div>
+            <div className="slider-row">
+              <span>Y</span>
+              <input
+                type="range" min={-60} max={60} step={0.5} value={t.y}
+                onChange={(e) => setTransform(activeLayer, { y: Number(e.target.value) })}
+              />
+              <span className="slider-val">{t.y.toFixed(1)}</span>
+            </div>
+            <div className="slider-row">
+              <span>S</span>
+              <input
+                type="range" min={0.2} max={3} step={0.05} value={t.scale}
+                onChange={(e) => setTransform(activeLayer, { scale: Number(e.target.value) })}
+              />
+              <span className="slider-val">{t.scale.toFixed(2)}</span>
+            </div>
+            <div className="slider-row">
+              <span>R</span>
+              <input
+                type="range" min={-180} max={180} step={1} value={t.rotation}
+                onChange={(e) => setTransform(activeLayer, { rotation: Number(e.target.value) })}
+              />
+              <span className="slider-val">{t.rotation}°</span>
+            </div>
+            <button className="shape-btn" onClick={() => resetTransform(activeLayer)}>
+              Сбросить
+            </button>
+          </>
+        ) : (
+          <div className="hint">
+            Кликни по слою на портрете или выбери из списка ниже:
+            <div className="shape-grid" style={{ marginTop: 8 }}>
+              {BUILTIN_LAYERS.map((id) => (
+                <button
+                  key={id}
+                  className="shape-btn"
+                  onClick={() => setActiveLayer(id)}
+                >
+                  {BUILTIN_LAYER_LABELS[id]}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <button className="btn" onClick={onExport}>

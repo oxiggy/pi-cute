@@ -1,7 +1,6 @@
-import { forwardRef, type CSSProperties } from 'react';
+import { forwardRef, useRef, useImperativeHandle, type CSSProperties } from 'react';
 import {
   usePortrait,
-  transformToString,
   type FaceShape,
   type EyesStyle,
   type BrowsStyle,
@@ -9,6 +8,7 @@ import {
   type MouthStyle,
   type HairStyle,
 } from '../store/portrait';
+import { DraggableLayer } from './DraggableLayer';
 
 import RoundFace from '../assets/face/round.svg?react';
 import OvalFace from '../assets/face/oval.svg?react';
@@ -51,61 +51,35 @@ import HairPonytailFront from '../assets/hair/ponytail/front.svg?react';
 type SvgComp = React.FC<React.SVGProps<SVGSVGElement>>;
 
 const FACE: Record<FaceShape, SvgComp> = {
-  round: RoundFace,
-  oval: OvalFace,
-  square: SquareFace,
-  long: LongFace,
+  round: RoundFace, oval: OvalFace, square: SquareFace, long: LongFace,
 };
-
 const EYES: Record<EyesStyle, SvgComp> = {
-  none: EyesNone,
-  dots: EyesDots,
-  smile: EyesSmile,
-  wink: EyesWink,
-  angry: EyesAngry,
+  none: EyesNone, dots: EyesDots, smile: EyesSmile, wink: EyesWink, angry: EyesAngry,
 };
-
 const BROWS: Record<BrowsStyle, SvgComp> = {
-  none: BrowsNone,
-  flat: BrowsFlat,
-  raised: BrowsRaised,
-  angry: BrowsAngry,
-  sad: BrowsSad,
+  none: BrowsNone, flat: BrowsFlat, raised: BrowsRaised, angry: BrowsAngry, sad: BrowsSad,
 };
-
 const NOSE: Record<NoseStyle, SvgComp> = {
-  none: NoseNone,
-  dot: NoseDot,
-  curve: NoseCurve,
+  none: NoseNone, dot: NoseDot, curve: NoseCurve,
 };
-
 const MOUTH: Record<MouthStyle, SvgComp> = {
-  none: MouthNone,
-  dot: MouthDot,
-  smile: MouthSmile,
-  open: MouthOpen,
-  flat: MouthFlat,
+  none: MouthNone, dot: MouthDot, smile: MouthSmile, open: MouthOpen, flat: MouthFlat,
 };
-
 const HAIR_BACK: Record<HairStyle, SvgComp> = {
-  none: HairNoneBack,
-  short: HairShortBack,
-  bob: HairBobBack,
-  long: HairLongBack,
-  ponytail: HairPonytailBack,
+  none: HairNoneBack, short: HairShortBack, bob: HairBobBack, long: HairLongBack, ponytail: HairPonytailBack,
 };
-
 const HAIR_FRONT: Record<HairStyle, SvgComp> = {
-  none: HairNoneFront,
-  short: HairShortFront,
-  bob: HairBobFront,
-  long: HairLongFront,
-  ponytail: HairPonytailFront,
+  none: HairNoneFront, short: HairShortFront, bob: HairBobFront, long: HairLongFront, ponytail: HairPonytailFront,
 };
 
-export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
-  const { face, eyes, brows, nose, mouth, hair, hairFill, skinTone, userImage, transforms } =
-    usePortrait();
+export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
+  const svgRef = useRef<SVGSVGElement>(null);
+  useImperativeHandle(externalRef, () => svgRef.current!, []);
+
+  const {
+    face, eyes, brows, nose, mouth, hair, hairFill, skinTone,
+    customLayers, setActiveLayer,
+  } = usePortrait();
 
   const FaceSvg = FACE[face];
   const EyesSvg = EYES[eyes];
@@ -115,19 +89,18 @@ export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
   const HairBackSvg = HAIR_BACK[hair];
   const HairFrontSvg = HAIR_FRONT[hair];
 
-  const hairStyle: CSSProperties =
+  const hairFillStyle: CSSProperties =
     hairFill.type === 'solid'
       ? ({ ['--hair-fill' as string]: hairFill.color } as CSSProperties)
       : ({ ['--hair-fill' as string]: 'url(#hair-gradient)' } as CSSProperties);
 
-  const hairTransform = transformToString(transforms.hair);
-
   return (
     <svg
-      ref={ref}
+      ref={svgRef}
       className="portrait"
       viewBox="0 0 128 128"
       xmlns="http://www.w3.org/2000/svg"
+      onPointerDown={() => setActiveLayer(null)}
     >
       {hairFill.type === 'gradient' && (
         <defs>
@@ -138,43 +111,44 @@ export const Portrait = forwardRef<SVGSVGElement>((_, ref) => {
         </defs>
       )}
 
-      <g transform={hairTransform} style={hairStyle}>
+      {/* Hair-back uses the same transform as hair-front (single "hair" layer). */}
+      <DraggableLayer id="hair" svgRef={svgRef} contentStyle={hairFillStyle}>
         <HairBackSvg width={128} height={128} />
-      </g>
+      </DraggableLayer>
 
       <g style={{ color: skinTone }}>
         <FaceSvg width={128} height={128} />
       </g>
 
-      <g transform={transformToString(transforms.eyes)}>
+      <DraggableLayer id="eyes" svgRef={svgRef}>
         <EyesSvg width={128} height={128} />
-      </g>
-      <g transform={transformToString(transforms.brows)}>
+      </DraggableLayer>
+      <DraggableLayer id="brows" svgRef={svgRef}>
         <BrowsSvg width={128} height={128} />
-      </g>
-      <g transform={transformToString(transforms.nose)}>
+      </DraggableLayer>
+      <DraggableLayer id="nose" svgRef={svgRef}>
         <NoseSvg width={128} height={128} />
-      </g>
-      <g transform={transformToString(transforms.mouth)}>
+      </DraggableLayer>
+      <DraggableLayer id="mouth" svgRef={svgRef}>
         <MouthSvg width={128} height={128} />
-      </g>
+      </DraggableLayer>
 
-      <g transform={hairTransform} style={hairStyle}>
+      <DraggableLayer id="hair" svgRef={svgRef} contentStyle={hairFillStyle}>
         <HairFrontSvg width={128} height={128} />
-      </g>
+      </DraggableLayer>
 
-      {userImage && (
-        <g transform={transformToString(transforms.userImage)}>
+      {customLayers.map((layer) => (
+        <DraggableLayer key={layer.id} id={layer.id} svgRef={svgRef}>
           <image
-            href={userImage}
+            href={layer.src}
             x={32}
             y={32}
             width={64}
             height={64}
-            preserveAspectRatio="xMidYMid slice"
+            preserveAspectRatio="xMidYMid meet"
           />
-        </g>
-      )}
+        </DraggableLayer>
+      ))}
     </svg>
   );
 });

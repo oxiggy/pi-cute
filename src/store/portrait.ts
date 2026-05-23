@@ -11,20 +11,27 @@ export type HairFill =
   | { type: 'solid'; color: string }
   | { type: 'gradient'; from: string; to: string };
 
-export type TransformableLayer = 'hair' | 'eyes' | 'brows' | 'nose' | 'mouth' | 'userImage';
-
 export type LayerTransform = { x: number; y: number; scale: number; rotation: number };
 
 export const DEFAULT_TRANSFORM: LayerTransform = { x: 0, y: 0, scale: 1, rotation: 0 };
 
-export const LAYER_LABELS: { id: TransformableLayer; label: string }[] = [
-  { id: 'hair', label: 'Волосы' },
-  { id: 'eyes', label: 'Глаза' },
-  { id: 'brows', label: 'Брови' },
-  { id: 'nose', label: 'Нос' },
-  { id: 'mouth', label: 'Рот' },
-  { id: 'userImage', label: 'Картинка' },
-];
+export type CustomLayer = {
+  id: string;
+  type: 'image';
+  src: string;
+  name: string;
+};
+
+export const BUILTIN_LAYERS = ['hair', 'eyes', 'brows', 'nose', 'mouth'] as const;
+export type BuiltinLayerId = (typeof BUILTIN_LAYERS)[number];
+
+export const BUILTIN_LAYER_LABELS: Record<BuiltinLayerId, string> = {
+  hair: 'Волосы',
+  eyes: 'Глаза',
+  brows: 'Брови',
+  nose: 'Нос',
+  mouth: 'Рот',
+};
 
 export const FACE_SHAPES: { id: FaceShape; label: string }[] = [
   { id: 'round', label: 'Round' },
@@ -71,17 +78,6 @@ export const HAIR_STYLES: { id: HairStyle; label: string }[] = [
   { id: 'ponytail', label: 'Ponytail' },
 ];
 
-type Transforms = Record<TransformableLayer, LayerTransform>;
-
-const initialTransforms: Transforms = {
-  hair: { ...DEFAULT_TRANSFORM },
-  eyes: { ...DEFAULT_TRANSFORM },
-  brows: { ...DEFAULT_TRANSFORM },
-  nose: { ...DEFAULT_TRANSFORM },
-  mouth: { ...DEFAULT_TRANSFORM },
-  userImage: { ...DEFAULT_TRANSFORM },
-};
-
 type PortraitState = {
   face: FaceShape;
   eyes: EyesStyle;
@@ -91,8 +87,9 @@ type PortraitState = {
   hair: HairStyle;
   hairFill: HairFill;
   skinTone: string;
-  userImage: string | null;
-  transforms: Transforms;
+  customLayers: CustomLayer[];
+  transforms: Record<string, LayerTransform>;
+  activeLayer: string | null;
   setFace: (face: FaceShape) => void;
   setEyes: (eyes: EyesStyle) => void;
   setBrows: (brows: BrowsStyle) => void;
@@ -101,10 +98,14 @@ type PortraitState = {
   setHair: (hair: HairStyle) => void;
   setHairFill: (fill: HairFill) => void;
   setSkinTone: (color: string) => void;
-  setUserImage: (dataUrl: string | null) => void;
-  setTransform: (layer: TransformableLayer, patch: Partial<LayerTransform>) => void;
-  resetTransform: (layer: TransformableLayer) => void;
+  addCustomLayer: (src: string, name: string) => string;
+  removeCustomLayer: (id: string) => void;
+  setActiveLayer: (id: string | null) => void;
+  setTransform: (id: string, patch: Partial<LayerTransform>) => void;
+  resetTransform: (id: string) => void;
 };
+
+let customCounter = 0;
 
 export const usePortrait = create<PortraitState>((set) => ({
   face: 'round',
@@ -115,8 +116,15 @@ export const usePortrait = create<PortraitState>((set) => ({
   hair: 'short',
   hairFill: { type: 'solid', color: '#4a3020' },
   skinTone: '#f0c8a0',
-  userImage: null,
-  transforms: initialTransforms,
+  customLayers: [],
+  transforms: {
+    hair: { ...DEFAULT_TRANSFORM },
+    eyes: { ...DEFAULT_TRANSFORM },
+    brows: { ...DEFAULT_TRANSFORM },
+    nose: { ...DEFAULT_TRANSFORM },
+    mouth: { ...DEFAULT_TRANSFORM },
+  },
+  activeLayer: null,
   setFace: (face) => set({ face }),
   setEyes: (eyes) => set({ eyes }),
   setBrows: (brows) => set({ brows }),
@@ -125,20 +133,42 @@ export const usePortrait = create<PortraitState>((set) => ({
   setHair: (hair) => set({ hair }),
   setHairFill: (hairFill) => set({ hairFill }),
   setSkinTone: (skinTone) => set({ skinTone }),
-  setUserImage: (userImage) => set({ userImage }),
-  setTransform: (layer, patch) =>
+  addCustomLayer: (src, name) => {
+    const id = `custom-${++customCounter}`;
     set((s) => ({
-      transforms: { ...s.transforms, [layer]: { ...s.transforms[layer], ...patch } },
+      customLayers: [...s.customLayers, { id, type: 'image', src, name }],
+      transforms: { ...s.transforms, [id]: { ...DEFAULT_TRANSFORM } },
+      activeLayer: id,
+    }));
+    return id;
+  },
+  removeCustomLayer: (id) =>
+    set((s) => {
+      const { [id]: _omit, ...rest } = s.transforms;
+      void _omit;
+      return {
+        customLayers: s.customLayers.filter((l) => l.id !== id),
+        transforms: rest,
+        activeLayer: s.activeLayer === id ? null : s.activeLayer,
+      };
+    }),
+  setActiveLayer: (activeLayer) => set({ activeLayer }),
+  setTransform: (id, patch) =>
+    set((s) => ({
+      transforms: {
+        ...s.transforms,
+        [id]: { ...(s.transforms[id] ?? DEFAULT_TRANSFORM), ...patch },
+      },
     })),
-  resetTransform: (layer) =>
+  resetTransform: (id) =>
     set((s) => ({
-      transforms: { ...s.transforms, [layer]: { ...DEFAULT_TRANSFORM } },
+      transforms: { ...s.transforms, [id]: { ...DEFAULT_TRANSFORM } },
     })),
 }));
 
-export function transformToString(t: LayerTransform): string {
+export function transformToString(t: LayerTransform | undefined): string {
+  const tr = t ?? DEFAULT_TRANSFORM;
   const cx = 64;
   const cy = 64;
-  // Translate to center, apply rotate+scale, translate back, then apply user offset.
-  return `translate(${cx + t.x} ${cy + t.y}) rotate(${t.rotation}) scale(${t.scale}) translate(${-cx} ${-cy})`;
+  return `translate(${cx + tr.x} ${cy + tr.y}) rotate(${tr.rotation}) scale(${tr.scale}) translate(${-cx} ${-cy})`;
 }
