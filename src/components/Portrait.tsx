@@ -12,6 +12,9 @@ import {
   type BangsStyle,
   type HairSideStyle,
   type EarStyle,
+  type HornStyle,
+  type HairAccessoryStyle,
+  type MakeupStyle,
   type PaintableLayerId,
   type LayerFill,
 } from '../store/portrait';
@@ -77,6 +80,23 @@ import EarRightLynx from '../assets/ear-right/lynx.svg?react';
 import EarRightWolf from '../assets/ear-right/wolf.svg?react';
 import EarRightRabbit from '../assets/ear-right/rabbit.svg?react';
 
+import HornLeftNone from '../assets/horn-left/none.svg?react';
+import HornLeftDemon from '../assets/horn-left/demon.svg?react';
+import HornLeftSmall from '../assets/horn-left/small.svg?react';
+import HornRightNone from '../assets/horn-right/none.svg?react';
+import HornRightDemon from '../assets/horn-right/demon.svg?react';
+import HornRightSmall from '../assets/horn-right/small.svg?react';
+
+import HairAccNone from '../assets/hair-accessory/none.svg?react';
+import HairAccHalo from '../assets/hair-accessory/halo.svg?react';
+import HairAccTiara from '../assets/hair-accessory/tiara.svg?react';
+
+import MakeupNone from '../assets/makeup/none.svg?react';
+import MakeupCheekStripes from '../assets/makeup/cheekStripes.svg?react';
+import MakeupFreckles from '../assets/makeup/freckles.svg?react';
+import MakeupMole from '../assets/makeup/mole.svg?react';
+import MakeupForeheadDot from '../assets/makeup/foreheadDot.svg?react';
+
 type SvgComp = React.FC<React.SVGProps<SVGSVGElement>>;
 
 const FACE: Record<FaceShape, SvgComp> = {
@@ -120,6 +140,22 @@ const EAR_RIGHT_S: Record<EarStyle, SvgComp> = {
   none: EarRightNone, human: EarRightHuman, cat: EarRightCat,
   lynx: EarRightLynx, wolf: EarRightWolf, rabbit: EarRightRabbit,
 };
+const HORN_LEFT_S: Record<HornStyle, SvgComp> = {
+  none: HornLeftNone, demon: HornLeftDemon, small: HornLeftSmall,
+};
+const HORN_RIGHT_S: Record<HornStyle, SvgComp> = {
+  none: HornRightNone, demon: HornRightDemon, small: HornRightSmall,
+};
+const HAIR_ACCESSORY_S: Record<HairAccessoryStyle, SvgComp> = {
+  none: HairAccNone, halo: HairAccHalo, tiara: HairAccTiara,
+};
+const MAKEUP_S: Record<MakeupStyle, SvgComp> = {
+  none: MakeupNone,
+  cheekStripes: MakeupCheekStripes,
+  freckles: MakeupFreckles,
+  mole: MakeupMole,
+  foreheadDot: MakeupForeheadDot,
+};
 
 function gradientId(layerId: PaintableLayerId) {
   return `grad-${layerId}`;
@@ -136,6 +172,7 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
   const {
     face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth,
     bangs, hairLeft, hairRight, earLeft, earRight,
+    hornLeft, hornRight, hairAccessory, makeup,
     layerColors, customLayers, setActiveLayer,
   } = usePortrait();
 
@@ -151,6 +188,10 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
   const HairRightSvg = HAIR_RIGHT[hairRight];
   const EarLeftSvg = EAR_LEFT_S[earLeft];
   const EarRightSvg = EAR_RIGHT_S[earRight];
+  const HornLeftSvg = HORN_LEFT_S[hornLeft];
+  const HornRightSvg = HORN_RIGHT_S[hornRight];
+  const HairAccessorySvg = HAIR_ACCESSORY_S[hairAccessory];
+  const MakeupSvg = MAKEUP_S[makeup];
 
   return (
     <svg
@@ -190,6 +231,12 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
       <g className="layer-paint" style={paintStyle(layerColors.face, 'face')}>
         <FaceSvg width={128} height={128} />
       </g>
+
+      <DraggableLayer id="makeup" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.makeup, 'makeup')}>
+          <MakeupSvg width={128} height={128} />
+        </g>
+      </DraggableLayer>
 
       <DraggableLayer id="eyeLeft" svgRef={svgRef}>
         <g className="layer-paint" style={paintStyle(layerColors.eyeLeft, 'eyeLeft')}>
@@ -236,6 +283,23 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
       <DraggableLayer id="earRight" svgRef={svgRef}>
         <g className="layer-paint" style={paintStyle(layerColors.earRight, 'earRight')}>
           <EarRightSvg width={128} height={128} />
+        </g>
+      </DraggableLayer>
+
+      <DraggableLayer id="hornLeft" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.hornLeft, 'hornLeft')}>
+          <HornLeftSvg width={128} height={128} />
+        </g>
+      </DraggableLayer>
+      <DraggableLayer id="hornRight" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.hornRight, 'hornRight')}>
+          <HornRightSvg width={128} height={128} />
+        </g>
+      </DraggableLayer>
+
+      <DraggableLayer id="hairAccessory" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.hairAccessory, 'hairAccessory')}>
+          <HairAccessorySvg width={128} height={128} />
         </g>
       </DraggableLayer>
 

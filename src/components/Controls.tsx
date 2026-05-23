@@ -9,6 +9,9 @@ import {
   BANGS_STYLES,
   HAIR_SIDE_STYLES,
   EAR_STYLES,
+  HORN_STYLES,
+  HAIR_ACCESSORY_STYLES,
+  MAKEUP_STYLES,
   BUILTIN_LAYERS,
   BUILTIN_LAYER_LABELS,
   DEFAULT_TRANSFORM,
@@ -22,9 +25,11 @@ export function Controls({ onExport }: Props) {
   const {
     face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth,
     bangs, hairLeft, hairRight, earLeft, earRight,
+    hornLeft, hornRight, hairAccessory, makeup,
     layerColors, customLayers, transforms, activeLayer,
     setFace, setEyeLeft, setEyeRight, setBrowLeft, setBrowRight, setNose, setMouth,
     setBangs, setHairLeft, setHairRight, setEarLeft, setEarRight,
+    setHornLeft, setHornRight, setHairAccessory, setMakeup,
     setLayerColor, addCustomLayer, removeCustomLayer,
     setActiveLayer, setTransform, resetTransform,
   } = usePortrait();
@@ -125,6 +130,62 @@ export function Controls({ onExport }: Props) {
               key={s.id}
               className={`shape-btn ${earRight === s.id ? 'active' : ''}`}
               onClick={() => setEarRight(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </LayerSection>
+
+      <LayerSection title="Левый рог" {...fillProps('hornLeft')}>
+        <div className="shape-grid">
+          {HORN_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${hornLeft === s.id ? 'active' : ''}`}
+              onClick={() => setHornLeft(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </LayerSection>
+
+      <LayerSection title="Правый рог" {...fillProps('hornRight')}>
+        <div className="shape-grid">
+          {HORN_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${hornRight === s.id ? 'active' : ''}`}
+              onClick={() => setHornRight(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </LayerSection>
+
+      <LayerSection title="Аксессуар прически" {...fillProps('hairAccessory')}>
+        <div className="shape-grid">
+          {HAIR_ACCESSORY_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${hairAccessory === s.id ? 'active' : ''}`}
+              onClick={() => setHairAccessory(s.id)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </LayerSection>
+
+      <LayerSection title="Макияж" {...fillProps('makeup')}>
+        <div className="shape-grid">
+          {MAKEUP_STYLES.map((s) => (
+            <button
+              key={s.id}
+              className={`shape-btn ${makeup === s.id ? 'active' : ''}`}
+              onClick={() => setMakeup(s.id)}
             >
               {s.label}
             </button>
