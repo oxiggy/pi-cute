@@ -20,7 +20,11 @@ export type MouthStyle =
   | 'o' | 'oh' | 'open' | 'yeah' | 'phew' | 'haHa'
   | 'lips1' | 'lips2' | 'lips3';
 export type BangsStyle = 'none' | 'v1' | 'v2' | 'v3' | 'v4' | 'v5' | 'v6' | 'v7';
-export type HairSideStyle = 'none' | 'demo';
+export type HairSideStyle =
+  | 'none'
+  | 'v1' | 'v2' | 'v2a' | 'v3' | 'v4' | 'v5' | 'v6' | 'v7' | 'v8' | 'v9'
+  | 'v10' | 'v11' | 'v12' | 'v13' | 'v15' | 'v16' | 'v17' | 'v18'
+  | 'w1' | 'y1';
 export type EarStyle =
   | 'none' | 'human'
   | 'cat1' | 'cat2'
@@ -166,7 +170,26 @@ export const BANGS_STYLES: { id: BangsStyle; label: string }[] = [
 
 export const HAIR_SIDE_STYLES: { id: HairSideStyle; label: string }[] = [
   { id: 'none', label: 'None' },
-  { id: 'demo', label: 'Demo' },
+  { id: 'v1', label: 'V1' },
+  { id: 'v2', label: 'V2' },
+  { id: 'v2a', label: 'V2.1' },
+  { id: 'v3', label: 'V3' },
+  { id: 'v4', label: 'V4' },
+  { id: 'v5', label: 'V5' },
+  { id: 'v6', label: 'V6' },
+  { id: 'v7', label: 'V7' },
+  { id: 'v8', label: 'V8' },
+  { id: 'v9', label: 'V9' },
+  { id: 'v10', label: 'V10' },
+  { id: 'v11', label: 'V11' },
+  { id: 'v12', label: 'V12' },
+  { id: 'v13', label: 'V13' },
+  { id: 'v15', label: 'V15' },
+  { id: 'v16', label: 'V16' },
+  { id: 'v17', label: 'V17' },
+  { id: 'v18', label: 'V18' },
+  { id: 'w1', label: 'W1' },
+  { id: 'y1', label: 'Y1' },
 ];
 
 export const EAR_STYLES: { id: EarStyle; label: string }[] = [
