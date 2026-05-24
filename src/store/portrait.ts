@@ -11,7 +11,14 @@ export type NoseStyle = 'none' | 'dot' | 'curve';
 export type MouthStyle = 'none' | 'smile' | 'dot' | 'open' | 'flat';
 export type BangsStyle = 'none' | 'demo';
 export type HairSideStyle = 'none' | 'demo';
-export type EarStyle = 'none' | 'human' | 'cat' | 'lynx' | 'wolf' | 'rabbit';
+export type EarStyle =
+  | 'none' | 'human'
+  | 'cat1' | 'cat2'
+  | 'deer' | 'deer2'
+  | 'lynx'
+  | 'rabbit2' | 'rabbit3'
+  | 'sheep'
+  | 'wolf';
 export type HornStyle = 'none' | 'demon' | 'small';
 export type HairAccessoryStyle = 'none' | 'halo' | 'tiara';
 export type MakeupStyle = 'none' | 'cheekStripes' | 'freckles' | 'mole' | 'foreheadDot';
@@ -123,10 +130,15 @@ export const HAIR_SIDE_STYLES: { id: HairSideStyle; label: string }[] = [
 export const EAR_STYLES: { id: EarStyle; label: string }[] = [
   { id: 'none', label: 'None' },
   { id: 'human', label: 'Human' },
-  { id: 'cat', label: 'Cat' },
+  { id: 'cat1', label: 'Cat 1' },
+  { id: 'cat2', label: 'Cat 2' },
+  { id: 'deer', label: 'Deer 1' },
+  { id: 'deer2', label: 'Deer 2' },
   { id: 'lynx', label: 'Lynx' },
+  { id: 'rabbit2', label: 'Rabbit 1' },
+  { id: 'rabbit3', label: 'Rabbit 2' },
+  { id: 'sheep', label: 'Sheep' },
   { id: 'wolf', label: 'Wolf' },
-  { id: 'rabbit', label: 'Rabbit' },
 ];
 
 export const HORN_STYLES: { id: HornStyle; label: string }[] = [

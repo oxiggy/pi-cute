@@ -1,0 +1,12 @@
+export { FACE } from './face';
+export { EYE_LEFT, EYE_RIGHT } from './eye';
+export { BROW_LEFT, BROW_RIGHT } from './brow';
+export { NOSE } from './nose';
+export { MOUTH } from './mouth';
+export { BANGS } from './bangs';
+export { HAIR_LEFT, HAIR_RIGHT } from './hair-side';
+export { EAR_LEFT, EAR_RIGHT } from './ear';
+export { HORN_LEFT, HORN_RIGHT } from './horn';
+export { HAIR_ACCESSORY } from './hair-accessory';
+export { MAKEUP } from './makeup';
+export { BEARD } from './beard';
