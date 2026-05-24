@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 
 export type FaceShape =
-  | 'default' | 'default2'
-  | 'round' | 'square'
-  | 'oval' | 'oval2'
-  | 'long' | 'long1' | 'long2';
+  | 'default' | 'default2' | 'defaultLong'
+  | 'round' | 'square' | 'oval'
+  | 'wide' | 'long'
+  | 'var1' | 'var2';
 export type EyeStyle = 'none' | 'dot' | 'closed' | 'angry';
 export type BrowStyle = 'none' | 'flat' | 'raised' | 'angry' | 'sad';
 export type NoseStyle = 'none' | 'dot' | 'curve';
@@ -79,13 +79,14 @@ export const BUILTIN_LAYER_LABELS: Record<BuiltinLayerId, string> = {
 export const FACE_SHAPES: { id: FaceShape; label: string }[] = [
   { id: 'default', label: 'Default 1' },
   { id: 'default2', label: 'Default 2' },
+  { id: 'defaultLong', label: 'Default Long' },
   { id: 'round', label: 'Round' },
   { id: 'square', label: 'Square' },
-  { id: 'oval', label: 'Oval 1' },
-  { id: 'oval2', label: 'Oval 2' },
-  { id: 'long', label: 'Long 1' },
-  { id: 'long1', label: 'Long 2' },
-  { id: 'long2', label: 'Long 3' },
+  { id: 'oval', label: 'Oval' },
+  { id: 'wide', label: 'Wide' },
+  { id: 'long', label: 'Long' },
+  { id: 'var1', label: 'Variant 1' },
+  { id: 'var2', label: 'Variant 2' },
 ];
 
 export const EYE_STYLES: { id: EyeStyle; label: string }[] = [
