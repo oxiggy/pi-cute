@@ -5,7 +5,12 @@ export type FaceShape =
   | 'round' | 'square' | 'oval'
   | 'wide' | 'long'
   | 'var1' | 'var2';
-export type EyeStyle = 'none' | 'dot' | 'closed' | 'angry';
+export type EyeStyle =
+  | 'none'
+  | 'point' | 'point2' | 'point3' | 'point4'
+  | 'lash' | 'lash2' | 'lash3' | 'lash4'
+  | 'closed' | 'closed2' | 'closed3' | 'closed4'
+  | 'squint' | 'wink';
 export type BrowStyle = 'none' | 'flat' | 'raised' | 'angry' | 'sad';
 export type NoseStyle = 'none' | 'dot' | 'curve';
 export type MouthStyle = 'none' | 'smile' | 'dot' | 'open' | 'flat';
@@ -90,10 +95,21 @@ export const FACE_SHAPES: { id: FaceShape; label: string }[] = [
 ];
 
 export const EYE_STYLES: { id: EyeStyle; label: string }[] = [
-  { id: 'dot', label: 'Dot' },
-  { id: 'closed', label: 'Closed' },
-  { id: 'angry', label: 'Angry' },
   { id: 'none', label: 'None' },
+  { id: 'point', label: 'Point 1' },
+  { id: 'point2', label: 'Point 2' },
+  { id: 'point3', label: 'Point 3' },
+  { id: 'point4', label: 'Point 4' },
+  { id: 'lash', label: 'Lash 1' },
+  { id: 'lash2', label: 'Lash 2' },
+  { id: 'lash3', label: 'Lash 3' },
+  { id: 'lash4', label: 'Lash 4' },
+  { id: 'closed', label: 'Closed 1' },
+  { id: 'closed2', label: 'Closed 2' },
+  { id: 'closed3', label: 'Closed 3' },
+  { id: 'closed4', label: 'Closed 4' },
+  { id: 'squint', label: 'Squint' },
+  { id: 'wink', label: 'Wink' },
 ];
 
 export const BROW_STYLES: { id: BrowStyle; label: string }[] = [
@@ -246,8 +262,8 @@ let customCounter = 0;
 
 export const usePortrait = create<PortraitState>((set) => ({
   face: 'default',
-  eyeLeft: 'dot',
-  eyeRight: 'dot',
+  eyeLeft: 'point',
+  eyeRight: 'point',
   browLeft: 'none',
   browRight: 'none',
   nose: 'none',
