@@ -13,7 +13,7 @@ type Props = {
 
 export function LayerSection({
   title,
-  defaultOpen = true,
+  defaultOpen = false,
   sticky = false,
   fill,
   onFillChange,

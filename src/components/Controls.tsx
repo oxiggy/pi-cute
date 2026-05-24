@@ -54,7 +54,7 @@ export function Controls({ onExport }: Props) {
 
   return (
     <aside className="controls">
-      <LayerSection title="Выбранный слой" sticky defaultOpen>
+      <LayerSection title="Выбранный слой" sticky>
         {activeLayer && t ? (
           <>
             <div className="active-layer-name">

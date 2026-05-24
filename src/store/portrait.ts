@@ -13,7 +13,12 @@ export type EyeStyle =
   | 'squint' | 'wink';
 export type BrowStyle = 'none' | 'flat' | 'raised' | 'angry' | 'sad';
 export type NoseStyle = 'none' | 'dot' | 'curve';
-export type MouthStyle = 'none' | 'smile' | 'dot' | 'open' | 'flat';
+export type MouthStyle =
+  | 'none' | 'dot' | 'flat'
+  | 'smile' | 'smile2' | 'smile3' | 'smile4' | 'smile5' | 'smile6'
+  | 'smileFun'
+  | 'o' | 'oh' | 'open' | 'yeah' | 'phew' | 'haHa'
+  | 'lips1' | 'lips2' | 'lips3';
 export type BangsStyle = 'none' | 'demo';
 export type HairSideStyle = 'none' | 'demo';
 export type EarStyle =
@@ -127,11 +132,25 @@ export const NOSE_STYLES: { id: NoseStyle; label: string }[] = [
 ];
 
 export const MOUTH_STYLES: { id: MouthStyle; label: string }[] = [
-  { id: 'smile', label: 'Smile' },
-  { id: 'dot', label: 'Dot' },
-  { id: 'open', label: 'Open' },
-  { id: 'flat', label: 'Flat' },
   { id: 'none', label: 'None' },
+  { id: 'dot', label: 'Dot' },
+  { id: 'flat', label: 'Flat' },
+  { id: 'smile', label: 'Smile 1' },
+  { id: 'smile2', label: 'Smile 2' },
+  { id: 'smile3', label: 'Smile 3' },
+  { id: 'smile4', label: 'Smile 4' },
+  { id: 'smile5', label: 'Smile 5' },
+  { id: 'smile6', label: 'Smile 6' },
+  { id: 'smileFun', label: 'Smile Fun' },
+  { id: 'o', label: 'O' },
+  { id: 'oh', label: 'Oh' },
+  { id: 'open', label: 'Open' },
+  { id: 'yeah', label: 'Yeah' },
+  { id: 'phew', label: 'Phew' },
+  { id: 'haHa', label: 'Ha-Ha' },
+  { id: 'lips1', label: 'Lips 1' },
+  { id: 'lips2', label: 'Lips 2' },
+  { id: 'lips3', label: 'Lips 3' },
 ];
 
 export const BANGS_STYLES: { id: BangsStyle; label: string }[] = [
