@@ -141,12 +141,6 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
         </g>
       </DraggableLayer>
 
-      <DraggableLayer id="bangs" svgRef={svgRef}>
-        <g className="layer-paint" style={paintStyle(layerColors.bangs, 'bangs')}>
-          <BangsSvg width={128} height={128} />
-        </g>
-      </DraggableLayer>
-
       <DraggableLayer id="earLeft" svgRef={svgRef}>
         <g className="layer-paint" style={paintStyle(layerColors.earLeft, 'earLeft')}>
           <EarLeftSvg width={128} height={128} />
@@ -155,6 +149,12 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
       <DraggableLayer id="earRight" svgRef={svgRef}>
         <g className="layer-paint" style={paintStyle(layerColors.earRight, 'earRight')}>
           <EarRightSvg width={128} height={128} />
+        </g>
+      </DraggableLayer>
+
+      <DraggableLayer id="bangs" svgRef={svgRef}>
+        <g className="layer-paint" style={paintStyle(layerColors.bangs, 'bangs')}>
+          <BangsSvg width={128} height={128} />
         </g>
       </DraggableLayer>
 

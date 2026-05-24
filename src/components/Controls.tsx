@@ -54,6 +54,68 @@ export function Controls({ onExport }: Props) {
 
   return (
     <aside className="controls">
+      <LayerSection title="Выбранный слой" sticky defaultOpen>
+        {activeLayer && t ? (
+          <>
+            <div className="active-layer-name">
+              {(BUILTIN_LAYER_LABELS as Record<string, string>)[activeLayer] ??
+                customLayers.find((l) => l.id === activeLayer)?.name ??
+                activeLayer}
+            </div>
+            <div className="slider-row">
+              <span>X</span>
+              <input
+                type="range" min={-60} max={60} step={0.5} value={t.x}
+                onChange={(e) => setTransform(activeLayer, { x: Number(e.target.value) })}
+              />
+              <span className="slider-val">{t.x.toFixed(1)}</span>
+            </div>
+            <div className="slider-row">
+              <span>Y</span>
+              <input
+                type="range" min={-60} max={60} step={0.5} value={t.y}
+                onChange={(e) => setTransform(activeLayer, { y: Number(e.target.value) })}
+              />
+              <span className="slider-val">{t.y.toFixed(1)}</span>
+            </div>
+            <div className="slider-row">
+              <span>S</span>
+              <input
+                type="range" min={0.2} max={3} step={0.05} value={t.scale}
+                onChange={(e) => setTransform(activeLayer, { scale: Number(e.target.value) })}
+              />
+              <span className="slider-val">{t.scale.toFixed(2)}</span>
+            </div>
+            <div className="slider-row">
+              <span>R</span>
+              <input
+                type="range" min={-180} max={180} step={1} value={t.rotation}
+                onChange={(e) => setTransform(activeLayer, { rotation: Number(e.target.value) })}
+              />
+              <span className="slider-val">{t.rotation}°</span>
+            </div>
+            <button className="shape-btn" onClick={() => resetTransform(activeLayer)}>
+              Сбросить
+            </button>
+          </>
+        ) : (
+          <div className="hint">
+            Кликни по слою на портрете или выбери из списка:
+            <div className="shape-grid" style={{ marginTop: 8 }}>
+              {BUILTIN_LAYERS.map((id) => (
+                <button
+                  key={id}
+                  className="shape-btn"
+                  onClick={() => setActiveLayer(id)}
+                >
+                  {BUILTIN_LAYER_LABELS[id]}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </LayerSection>
+
       <LayerSection title="Лицо" {...fillProps('face')}>
         <div className="shape-grid">
           {FACE_SHAPES.map((s) => (
@@ -311,68 +373,6 @@ export function Controls({ onExport }: Props) {
               </li>
             ))}
           </ul>
-        )}
-      </LayerSection>
-
-      <LayerSection title="Выбранный слой">
-        {activeLayer && t ? (
-          <>
-            <div className="active-layer-name">
-              {(BUILTIN_LAYER_LABELS as Record<string, string>)[activeLayer] ??
-                customLayers.find((l) => l.id === activeLayer)?.name ??
-                activeLayer}
-            </div>
-            <div className="slider-row">
-              <span>X</span>
-              <input
-                type="range" min={-60} max={60} step={0.5} value={t.x}
-                onChange={(e) => setTransform(activeLayer, { x: Number(e.target.value) })}
-              />
-              <span className="slider-val">{t.x.toFixed(1)}</span>
-            </div>
-            <div className="slider-row">
-              <span>Y</span>
-              <input
-                type="range" min={-60} max={60} step={0.5} value={t.y}
-                onChange={(e) => setTransform(activeLayer, { y: Number(e.target.value) })}
-              />
-              <span className="slider-val">{t.y.toFixed(1)}</span>
-            </div>
-            <div className="slider-row">
-              <span>S</span>
-              <input
-                type="range" min={0.2} max={3} step={0.05} value={t.scale}
-                onChange={(e) => setTransform(activeLayer, { scale: Number(e.target.value) })}
-              />
-              <span className="slider-val">{t.scale.toFixed(2)}</span>
-            </div>
-            <div className="slider-row">
-              <span>R</span>
-              <input
-                type="range" min={-180} max={180} step={1} value={t.rotation}
-                onChange={(e) => setTransform(activeLayer, { rotation: Number(e.target.value) })}
-              />
-              <span className="slider-val">{t.rotation}°</span>
-            </div>
-            <button className="shape-btn" onClick={() => resetTransform(activeLayer)}>
-              Сбросить
-            </button>
-          </>
-        ) : (
-          <div className="hint">
-            Кликни по слою на портрете или выбери из списка:
-            <div className="shape-grid" style={{ marginTop: 8 }}>
-              {BUILTIN_LAYERS.map((id) => (
-                <button
-                  key={id}
-                  className="shape-btn"
-                  onClick={() => setActiveLayer(id)}
-                >
-                  {BUILTIN_LAYER_LABELS[id]}
-                </button>
-              ))}
-            </div>
-          </div>
         )}
       </LayerSection>
 

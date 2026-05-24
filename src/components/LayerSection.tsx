@@ -5,6 +5,7 @@ import { FillPicker } from './FillPicker';
 type Props = {
   title: string;
   defaultOpen?: boolean;
+  sticky?: boolean;
   fill?: LayerFill;
   onFillChange?: (fill: LayerFill) => void;
   children?: ReactNode;
@@ -13,13 +14,14 @@ type Props = {
 export function LayerSection({
   title,
   defaultOpen = true,
+  sticky = false,
   fill,
   onFillChange,
   children,
 }: Props) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className={`layer-section ${open ? 'is-open' : 'is-closed'}`}>
+    <div className={`layer-section ${open ? 'is-open' : 'is-closed'} ${sticky ? 'is-sticky' : ''}`}>
       <button
         type="button"
         className="layer-header"

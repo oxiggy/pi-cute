@@ -52,6 +52,13 @@ html, body, #root {
   background: #1d1e26;
   flex-shrink: 0;
 }
+.layer-section.is-sticky {
+  position: sticky;
+  top: -1px;
+  z-index: 5;
+  background: #1d1e26;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
 .layer-header {
   width: 100%;
   display: flex;
