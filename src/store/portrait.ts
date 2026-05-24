@@ -19,7 +19,7 @@ export type MouthStyle =
   | 'smileFun'
   | 'o' | 'oh' | 'open' | 'yeah' | 'phew' | 'haHa'
   | 'lips1' | 'lips2' | 'lips3';
-export type BangsStyle = 'none' | 'demo';
+export type BangsStyle = 'none' | 'v1' | 'v2' | 'v3' | 'v4' | 'v5' | 'v6' | 'v7';
 export type HairSideStyle = 'none' | 'demo';
 export type EarStyle =
   | 'none' | 'human'
@@ -31,7 +31,7 @@ export type EarStyle =
   | 'wolf';
 export type HornStyle = 'none' | 'demon' | 'small';
 export type HairAccessoryStyle = 'none' | 'halo' | 'tiara';
-export type MakeupStyle = 'none' | 'cheekStripes' | 'freckles' | 'mole' | 'foreheadDot';
+export type MakeupStyle = 'none' | 'cheekStripes' | 'freckles' | 'mole' | 'dot';
 export type BeardStyle = 'none' | 'beard' | 'mustache';
 
 /** Fill for any layer — either solid or two-stop linear gradient with angle (deg). */
@@ -155,7 +155,13 @@ export const MOUTH_STYLES: { id: MouthStyle; label: string }[] = [
 
 export const BANGS_STYLES: { id: BangsStyle; label: string }[] = [
   { id: 'none', label: 'None' },
-  { id: 'demo', label: 'Demo' },
+  { id: 'v1', label: 'V1' },
+  { id: 'v2', label: 'V2' },
+  { id: 'v3', label: 'V3' },
+  { id: 'v4', label: 'V4' },
+  { id: 'v5', label: 'V5' },
+  { id: 'v6', label: 'V6' },
+  { id: 'v7', label: 'V7' },
 ];
 
 export const HAIR_SIDE_STYLES: { id: HairSideStyle; label: string }[] = [
@@ -194,7 +200,7 @@ export const MAKEUP_STYLES: { id: MakeupStyle; label: string }[] = [
   { id: 'cheekStripes', label: 'Cheek Stripes' },
   { id: 'freckles', label: 'Freckles' },
   { id: 'mole', label: 'Mole' },
-  { id: 'foreheadDot', label: 'Forehead Dot' },
+  { id: 'dot', label: 'Dot' },
 ];
 
 export const BEARD_STYLES: { id: BeardStyle; label: string }[] = [
@@ -287,7 +293,7 @@ export const usePortrait = create<PortraitState>((set) => ({
   browRight: 'none',
   nose: 'none',
   mouth: 'smile',
-  bangs: 'demo',
+  bangs: 'v1',
   hairLeft: 'none',
   hairRight: 'none',
   earLeft: 'none',
