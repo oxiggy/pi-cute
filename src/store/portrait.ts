@@ -309,6 +309,8 @@ type PortraitState = {
   customLayers: CustomLayer[];
   transforms: Record<string, LayerTransform>;
   activeLayer: string | null;
+  /** Auto-scroll the controls panel to the selected layer's section. */
+  autoScrollToActive: boolean;
   /** Render order (bottom→top). Built-in layer ids + custom layer ids. */
   layerOrder: string[];
 
@@ -335,6 +337,7 @@ type PortraitState = {
   addCustomLayer: (src: string, name: string) => string;
   removeCustomLayer: (id: string) => void;
   setActiveLayer: (id: string | null) => void;
+  setAutoScrollToActive: (v: boolean) => void;
   setTransform: (id: string, patch: Partial<LayerTransform>) => void;
   resetTransform: (id: string) => void;
   moveLayerUp: (id: string) => void;
@@ -386,6 +389,7 @@ export const usePortrait = create<PortraitState>((set) => ({
     mouth: { ...DEFAULT_TRANSFORM },
   },
   activeLayer: null,
+  autoScrollToActive: true,
 
   setFace: (face) => set({ face }),
   setEyeLeft: (eyeLeft) => set({ eyeLeft }),
@@ -430,6 +434,7 @@ export const usePortrait = create<PortraitState>((set) => ({
       };
     }),
   setActiveLayer: (activeLayer) => set({ activeLayer }),
+  setAutoScrollToActive: (autoScrollToActive) => set({ autoScrollToActive }),
   setTransform: (id, patch) =>
     set((s) => ({
       transforms: {

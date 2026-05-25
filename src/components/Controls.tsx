@@ -1,4 +1,4 @@
-import { type ChangeEvent } from 'react';
+import { useEffect, type ChangeEvent } from 'react';
 import {
   usePortrait,
   FACE_SHAPES,
@@ -34,6 +34,7 @@ export function Controls({ onExport }: Props) {
     setLayerColor, addCustomLayer, removeCustomLayer,
     setActiveLayer, setTransform, resetTransform,
     layerOrder, moveLayerUp, moveLayerDown,
+    autoScrollToActive, setAutoScrollToActive,
   } = usePortrait();
 
   function handleFile(e: ChangeEvent<HTMLInputElement>) {
@@ -52,6 +53,27 @@ export function Controls({ onExport }: Props) {
   });
 
   const t = activeLayer ? transforms[activeLayer] ?? DEFAULT_TRANSFORM : null;
+
+  // When a layer becomes active, scroll its section into view and auto-expand it.
+  useEffect(() => {
+    if (!activeLayer || !autoScrollToActive) return;
+    const aside = document.querySelector('.controls') as HTMLElement | null;
+    const el = document.querySelector(
+      `.layer-section[data-layer-id="${activeLayer}"]`,
+    ) as HTMLElement | null;
+    if (!aside || !el) return;
+    if (!el.classList.contains('is-open')) {
+      (el.querySelector('.layer-header') as HTMLButtonElement | null)?.click();
+    }
+    // Wait one frame so any layout caused by auto-expand has settled, then scroll
+    // the section to just below the sticky header (its height is dynamic).
+    requestAnimationFrame(() => {
+      const sticky = aside.querySelector('.layer-section.is-sticky') as HTMLElement | null;
+      const stickyH = sticky?.offsetHeight ?? 0;
+      const target = el.offsetTop - aside.offsetTop - stickyH - 8;
+      aside.scrollTo({ top: Math.max(target, 0), behavior: 'smooth' });
+    });
+  }, [activeLayer, autoScrollToActive]);
 
   return (
     <aside className="controls">
@@ -144,9 +166,18 @@ export function Controls({ onExport }: Props) {
             </div>
           </div>
         )}
+
+        <label className="checkbox-row">
+          <input
+            type="checkbox"
+            checked={autoScrollToActive}
+            onChange={(e) => setAutoScrollToActive(e.target.checked)}
+          />
+          <span>Скроллить до выбранного слоя</span>
+        </label>
       </LayerSection>
 
-      <LayerSection title="Лицо" {...fillProps('face')}>
+      <LayerSection title="Лицо" layerId="face" {...fillProps('face')}>
         <div className="shape-grid">
           {FACE_SHAPES.map((s) => (
             <button
@@ -160,7 +191,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Чёлка" {...fillProps('bangs')}>
+      <LayerSection title="Чёлка" layerId="bangs" {...fillProps('bangs')}>
         <div className="shape-grid">
           {BANGS_STYLES.map((s) => (
             <button
@@ -174,7 +205,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Волосы (лев)" {...fillProps('hairLeft')}>
+      <LayerSection title="Волосы (лев)" layerId="hairLeft" {...fillProps('hairLeft')}>
         <div className="shape-grid">
           {HAIR_SIDE_STYLES.map((s) => (
             <button
@@ -188,7 +219,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Волосы (прав)" {...fillProps('hairRight')}>
+      <LayerSection title="Волосы (прав)" layerId="hairRight" {...fillProps('hairRight')}>
         <div className="shape-grid">
           {HAIR_SIDE_STYLES.map((s) => (
             <button
@@ -202,7 +233,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Левое ухо" {...fillProps('earLeft')}>
+      <LayerSection title="Левое ухо" layerId="earLeft" {...fillProps('earLeft')}>
         <div className="shape-grid">
           {EAR_STYLES.map((s) => (
             <button
@@ -216,7 +247,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Правое ухо" {...fillProps('earRight')}>
+      <LayerSection title="Правое ухо" layerId="earRight" {...fillProps('earRight')}>
         <div className="shape-grid">
           {EAR_STYLES.map((s) => (
             <button
@@ -230,7 +261,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Левый рог" {...fillProps('hornLeft')}>
+      <LayerSection title="Левый рог" layerId="hornLeft" {...fillProps('hornLeft')}>
         <div className="shape-grid">
           {HORN_STYLES.map((s) => (
             <button
@@ -244,7 +275,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Правый рог" {...fillProps('hornRight')}>
+      <LayerSection title="Правый рог" layerId="hornRight" {...fillProps('hornRight')}>
         <div className="shape-grid">
           {HORN_STYLES.map((s) => (
             <button
@@ -258,7 +289,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Аксессуар прически" {...fillProps('hairAccessory')}>
+      <LayerSection title="Аксессуар прически" layerId="hairAccessory" {...fillProps('hairAccessory')}>
         <div className="shape-grid">
           {HAIR_ACCESSORY_STYLES.map((s) => (
             <button
@@ -272,7 +303,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Макияж" {...fillProps('makeup')}>
+      <LayerSection title="Макияж" layerId="makeup" {...fillProps('makeup')}>
         <div className="shape-grid">
           {MAKEUP_STYLES.map((s) => (
             <button
@@ -286,7 +317,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Борода" {...fillProps('beard')}>
+      <LayerSection title="Борода" layerId="beard" {...fillProps('beard')}>
         <div className="shape-grid">
           {BEARD_STYLES.map((s) => (
             <button
@@ -300,7 +331,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Левый глаз" {...fillProps('eyeLeft')}>
+      <LayerSection title="Левый глаз" layerId="eyeLeft" {...fillProps('eyeLeft')}>
         <div className="shape-grid">
           {EYE_STYLES.map((s) => (
             <button
@@ -314,7 +345,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Правый глаз" {...fillProps('eyeRight')}>
+      <LayerSection title="Правый глаз" layerId="eyeRight" {...fillProps('eyeRight')}>
         <div className="shape-grid">
           {EYE_STYLES.map((s) => (
             <button
@@ -328,7 +359,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Левая бровь" {...fillProps('browLeft')}>
+      <LayerSection title="Левая бровь" layerId="browLeft" {...fillProps('browLeft')}>
         <div className="shape-grid">
           {BROW_STYLES.map((s) => (
             <button
@@ -342,7 +373,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Правая бровь" {...fillProps('browRight')}>
+      <LayerSection title="Правая бровь" layerId="browRight" {...fillProps('browRight')}>
         <div className="shape-grid">
           {BROW_STYLES.map((s) => (
             <button
@@ -356,7 +387,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Нос" {...fillProps('nose')}>
+      <LayerSection title="Нос" layerId="nose" {...fillProps('nose')}>
         <div className="shape-grid">
           {NOSE_STYLES.map((s) => (
             <button
@@ -370,7 +401,7 @@ export function Controls({ onExport }: Props) {
         </div>
       </LayerSection>
 
-      <LayerSection title="Рот" {...fillProps('mouth')}>
+      <LayerSection title="Рот" layerId="mouth" {...fillProps('mouth')}>
         <div className="shape-grid">
           {MOUTH_STYLES.map((s) => (
             <button

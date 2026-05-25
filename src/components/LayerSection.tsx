@@ -10,6 +10,8 @@ type Props = {
   fill?: LayerFill;
   onFillChange?: (fill: LayerFill) => void;
   allowNoneFill?: boolean;
+  /** Optional layer id — exposed as `data-layer-id` so Controls can scroll to it. */
+  layerId?: string;
   children?: ReactNode;
 };
 
@@ -21,11 +23,13 @@ export function LayerSection({
   fill,
   onFillChange,
   allowNoneFill = false,
+  layerId,
   children,
 }: Props) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div
+      data-layer-id={layerId}
       className={`layer-section ${open ? 'is-open' : 'is-closed'} ${sticky ? 'is-sticky' : ''} ${highlight ? 'is-highlighted' : ''}`}
     >
       <button
