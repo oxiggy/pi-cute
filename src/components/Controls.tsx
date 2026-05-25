@@ -55,7 +55,7 @@ export function Controls({ onExport }: Props) {
 
   return (
     <aside className="controls">
-      <LayerSection title="Выбранный слой" sticky>
+      <LayerSection title="Выбранный слой" sticky highlight={!!activeLayer}>
         {activeLayer && t ? (
           <>
             <div className="active-layer-name">
@@ -119,9 +119,14 @@ export function Controls({ onExport }: Props) {
               />
               <span className="slider-val">{t.rotation}°</span>
             </div>
-            <button className="shape-btn" onClick={() => resetTransform(activeLayer)}>
-              Сбросить
-            </button>
+            <div className="action-row">
+              <button className="shape-btn" onClick={() => resetTransform(activeLayer)}>
+                Сбросить
+              </button>
+              <button className="shape-btn" onClick={() => setActiveLayer(null)}>
+                Снять выделение
+              </button>
+            </div>
           </>
         ) : (
           <div className="hint">

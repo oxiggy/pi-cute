@@ -6,6 +6,7 @@ type Props = {
   title: string;
   defaultOpen?: boolean;
   sticky?: boolean;
+  highlight?: boolean;
   fill?: LayerFill;
   onFillChange?: (fill: LayerFill) => void;
   allowNoneFill?: boolean;
@@ -16,6 +17,7 @@ export function LayerSection({
   title,
   defaultOpen = false,
   sticky = false,
+  highlight = false,
   fill,
   onFillChange,
   allowNoneFill = false,
@@ -23,7 +25,9 @@ export function LayerSection({
 }: Props) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className={`layer-section ${open ? 'is-open' : 'is-closed'} ${sticky ? 'is-sticky' : ''}`}>
+    <div
+      className={`layer-section ${open ? 'is-open' : 'is-closed'} ${sticky ? 'is-sticky' : ''} ${highlight ? 'is-highlighted' : ''}`}
+    >
       <button
         type="button"
         className="layer-header"

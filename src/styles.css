@@ -61,6 +61,12 @@ html, body, #root {
   background: #1d1e26;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
+.layer-section.is-highlighted {
+  border-color: #7a5cff;
+  box-shadow: 0 0 0 1px #7a5cff, 0 4px 12px rgba(122, 92, 255, 0.25);
+}
+.layer-section.is-highlighted .layer-header { background: #2d2645; }
+.layer-section.is-highlighted .layer-header:hover { background: #342c52; }
 .layer-header {
   width: 100%;
   display: flex;
@@ -175,6 +181,12 @@ input[type="color"] {
 .zorder-row .shape-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+.action-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .custom-layers {
