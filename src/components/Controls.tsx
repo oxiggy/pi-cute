@@ -33,6 +33,7 @@ export function Controls({ onExport }: Props) {
     setHornLeft, setHornRight, setHairAccessory, setMakeup, setBeard,
     setLayerColor, addCustomLayer, removeCustomLayer,
     setActiveLayer, setTransform, resetTransform,
+    layerOrder, moveLayerUp, moveLayerDown,
   } = usePortrait();
 
   function handleFile(e: ChangeEvent<HTMLInputElement>) {
@@ -62,6 +63,30 @@ export function Controls({ onExport }: Props) {
                 customLayers.find((l) => l.id === activeLayer)?.name ??
                 activeLayer}
             </div>
+
+            {(() => {
+              const idx = layerOrder.indexOf(activeLayer);
+              const total = layerOrder.length;
+              return (
+                <div className="zorder-row">
+                  <span className="zorder-label">
+                    Слой {idx >= 0 ? idx + 1 : '?'} / {total}
+                  </span>
+                  <button
+                    className="shape-btn"
+                    onClick={() => moveLayerDown(activeLayer)}
+                    disabled={idx <= 0}
+                    title="Опустить (за другие)"
+                  >↓</button>
+                  <button
+                    className="shape-btn"
+                    onClick={() => moveLayerUp(activeLayer)}
+                    disabled={idx < 0 || idx >= total - 1}
+                    title="Поднять (над другими)"
+                  >↑</button>
+                </div>
+              );
+            })()}
             <div className="slider-row">
               <span>X</span>
               <input

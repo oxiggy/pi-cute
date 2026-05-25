@@ -85,6 +85,11 @@ html, body, #root {
 /* --- Universal layer painting --- */
 /* Any element inside a .layer-paint group that has an explicit fill (not "none")
    gets repainted with the layer's --layer-fill. Same for stroke. */
+.layer-paint {
+  /* Declared here so static analyzers know the variable exists.
+     Actual value is set inline via style={{ '--layer-fill': ... }} on each layer wrapper. */
+  --layer-fill: currentColor;
+}
 .layer-paint *[fill]:not([fill="none"]) {
   fill: var(--layer-fill);
 }
@@ -149,6 +154,25 @@ input[type="color"] {
 .slider-val {
   text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+.zorder-row {
+  display: grid;
+  grid-template-columns: 1fr 36px 36px;
+  align-items: center;
+  gap: 6px;
+}
+.zorder-label {
+  font-size: 12px;
+  color: #b0b0bc;
+}
+.zorder-row .shape-btn {
+  padding: 6px;
+  font-size: 14px;
+}
+.zorder-row .shape-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .custom-layers {

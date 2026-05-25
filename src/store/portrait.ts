@@ -64,6 +64,7 @@ export const PAINTABLE_LAYERS = [
 export type PaintableLayerId = (typeof PAINTABLE_LAYERS)[number];
 
 export const BUILTIN_LAYERS = [
+  'face',
   'bangs', 'hairLeft', 'hairRight',
   'earLeft', 'earRight',
   'hornLeft', 'hornRight',
@@ -75,6 +76,7 @@ export const BUILTIN_LAYERS = [
 export type BuiltinLayerId = (typeof BUILTIN_LAYERS)[number];
 
 export const BUILTIN_LAYER_LABELS: Record<BuiltinLayerId, string> = {
+  face: 'Лицо',
   bangs: 'Чёлка',
   hairLeft: 'Волосы (лев)',
   hairRight: 'Волосы (прав)',
@@ -92,6 +94,21 @@ export const BUILTIN_LAYER_LABELS: Record<BuiltinLayerId, string> = {
   mouth: 'Рот',
   beard: 'Борода',
 };
+
+/** Default render order (index 0 = drawn first / behind everything). */
+export const DEFAULT_LAYER_ORDER: BuiltinLayerId[] = [
+  'hairLeft', 'hairRight',
+  'face',
+  'makeup',
+  'eyeLeft', 'eyeRight',
+  'browLeft', 'browRight',
+  'nose', 'mouth',
+  'beard',
+  'earLeft', 'earRight',
+  'hornLeft', 'hornRight',
+  'bangs',
+  'hairAccessory',
+];
 
 export const FACE_SHAPES: { id: FaceShape; label: string }[] = [
   { id: 'default', label: 'Default 1' },
@@ -283,6 +300,8 @@ type PortraitState = {
   customLayers: CustomLayer[];
   transforms: Record<string, LayerTransform>;
   activeLayer: string | null;
+  /** Render order (bottom→top). Built-in layer ids + custom layer ids. */
+  layerOrder: string[];
 
   setFace: (face: FaceShape) => void;
   setEyeLeft: (eye: EyeStyle) => void;
@@ -309,6 +328,8 @@ type PortraitState = {
   setActiveLayer: (id: string | null) => void;
   setTransform: (id: string, patch: Partial<LayerTransform>) => void;
   resetTransform: (id: string) => void;
+  moveLayerUp: (id: string) => void;
+  moveLayerDown: (id: string) => void;
 };
 
 let customCounter = 0;
@@ -335,7 +356,9 @@ export const usePortrait = create<PortraitState>((set) => ({
   layerColors: DEFAULT_LAYER_COLORS,
 
   customLayers: [],
+  layerOrder: [...DEFAULT_LAYER_ORDER],
   transforms: {
+    face: { ...DEFAULT_TRANSFORM },
     bangs: { ...DEFAULT_TRANSFORM },
     hairLeft: { ...DEFAULT_TRANSFORM },
     hairRight: { ...DEFAULT_TRANSFORM },
@@ -381,6 +404,7 @@ export const usePortrait = create<PortraitState>((set) => ({
     set((s) => ({
       customLayers: [...s.customLayers, { id, type: 'image', src, name }],
       transforms: { ...s.transforms, [id]: { ...DEFAULT_TRANSFORM } },
+      layerOrder: [...s.layerOrder, id],
       activeLayer: id,
     }));
     return id;
@@ -392,6 +416,7 @@ export const usePortrait = create<PortraitState>((set) => ({
       return {
         customLayers: s.customLayers.filter((l) => l.id !== id),
         transforms: rest,
+        layerOrder: s.layerOrder.filter((x) => x !== id),
         activeLayer: s.activeLayer === id ? null : s.activeLayer,
       };
     }),
@@ -407,6 +432,22 @@ export const usePortrait = create<PortraitState>((set) => ({
     set((s) => ({
       transforms: { ...s.transforms, [id]: { ...DEFAULT_TRANSFORM } },
     })),
+  moveLayerUp: (id) =>
+    set((s) => {
+      const arr = [...s.layerOrder];
+      const i = arr.indexOf(id);
+      if (i < 0 || i >= arr.length - 1) return {};
+      [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+      return { layerOrder: arr };
+    }),
+  moveLayerDown: (id) =>
+    set((s) => {
+      const arr = [...s.layerOrder];
+      const i = arr.indexOf(id);
+      if (i <= 0) return {};
+      [arr[i], arr[i - 1]] = [arr[i - 1], arr[i]];
+      return { layerOrder: arr };
+    }),
 }));
 
 export function transformToString(t: LayerTransform | undefined): string {

@@ -2,6 +2,7 @@
  *  exported SVG because external stylesheets don't load when an SVG is rendered
  *  inside an <img>. Kept in sync with the rules in src/styles.css. */
 const INLINED_PAINT_CSS = `
+  .layer-paint { --layer-fill: currentColor; }
   .layer-paint *[fill]:not([fill="none"]) { fill: var(--layer-fill); }
   .layer-paint *[stroke]:not([stroke="none"]) { stroke: var(--layer-fill); }
 `;
