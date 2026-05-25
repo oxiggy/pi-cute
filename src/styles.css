@@ -62,6 +62,15 @@ html, body, #root {
   z-index: 5;
   background: #1d1e26;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  /* Cap height so a tall body (e.g. layer picker grid + sliders) doesn't fill the
+     entire viewport. Excess content scrolls inside .layer-body below. */
+  max-height: calc(100vh - 160px);
+  display: flex;
+  flex-direction: column;
+}
+.layer-section.is-sticky .layer-body {
+  overflow-y: auto;
+  min-height: 0;
 }
 .layer-section.is-highlighted {
   border-color: #7a5cff;
