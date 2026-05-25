@@ -51,6 +51,8 @@ html, body, #root {
   overflow: hidden;
   background: #1d1e26;
   flex-shrink: 0;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .layer-section.is-sticky {
   position: sticky;
