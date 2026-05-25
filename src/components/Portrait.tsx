@@ -81,6 +81,17 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
         })}
       </defs>
 
+      {/* Background — fills the entire viewBox, behind everything. */}
+      {layerColors.background.type !== 'none' && (
+        <rect
+          x={0}
+          y={0}
+          width={128}
+          height={128}
+          fill={fillToCssValue(layerColors.background, gradientId('background'))}
+        />
+      )}
+
       {/* Side hair behind face. */}
       <DraggableLayer id="hairLeft" svgRef={svgRef}>
         <g className="layer-paint" style={paintStyle(layerColors.hairLeft, 'hairLeft')}>

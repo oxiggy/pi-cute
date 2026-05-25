@@ -376,6 +376,8 @@ export function Controls({ onExport }: Props) {
         )}
       </LayerSection>
 
+      <LayerSection title="Фон" {...fillProps('background')} allowNoneFill />
+
       <button className="btn" onClick={onExport}>
         Скачать PNG
       </button>

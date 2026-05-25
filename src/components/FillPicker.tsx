@@ -3,10 +3,12 @@ import type { LayerFill } from '../store/portrait';
 type Props = {
   fill: LayerFill;
   onChange: (fill: LayerFill) => void;
+  /** Show a "None" option (transparent). Default false. */
+  allowNone?: boolean;
 };
 
-export function FillPicker({ fill, onChange }: Props) {
-  // Stable defaults so the unused side keeps its values when toggling modes.
+export function FillPicker({ fill, onChange, allowNone = false }: Props) {
+  // Stable defaults so the unused branches keep their values when toggling modes.
   const solidColor = fill.type === 'solid' ? fill.color : '#888888';
   const gradFrom = fill.type === 'gradient' ? fill.from : '#bbbbbb';
   const gradTo = fill.type === 'gradient' ? fill.to : '#333333';
@@ -14,7 +16,16 @@ export function FillPicker({ fill, onChange }: Props) {
 
   return (
     <div className="fill-picker">
-      <div className="fill-mode">
+      <div className="fill-mode" style={allowNone ? { gridTemplateColumns: '1fr 1fr 1fr' } : undefined}>
+        {allowNone && (
+          <button
+            type="button"
+            className={`shape-btn ${fill.type === 'none' ? 'active' : ''}`}
+            onClick={() => onChange({ type: 'none' })}
+          >
+            Нет
+          </button>
+        )}
         <button
           type="button"
           className={`shape-btn ${fill.type === 'solid' ? 'active' : ''}`}
@@ -31,13 +42,15 @@ export function FillPicker({ fill, onChange }: Props) {
         </button>
       </div>
 
-      {fill.type === 'solid' ? (
+      {fill.type === 'solid' && (
         <input
           type="color"
           value={fill.color}
           onChange={(e) => onChange({ type: 'solid', color: e.target.value })}
         />
-      ) : (
+      )}
+
+      {fill.type === 'gradient' && (
         <>
           <div className="grad-pickers">
             <input

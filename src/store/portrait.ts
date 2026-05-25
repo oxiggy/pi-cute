@@ -38,8 +38,10 @@ export type HairAccessoryStyle = 'none' | 'halo' | 'tiara';
 export type MakeupStyle = 'none' | 'cheekStripes' | 'freckles' | 'mole' | 'dot';
 export type BeardStyle = 'none' | 'beard' | 'mustache';
 
-/** Fill for any layer — either solid or two-stop linear gradient with angle (deg). */
+/** Fill for any layer — none (transparent), solid, or two-stop linear gradient with angle (deg).
+ *  'none' is only meaningful for layers that opt-in (currently: background). */
 export type LayerFill =
+  | { type: 'none' }
   | { type: 'solid'; color: string }
   | { type: 'gradient'; from: string; to: string; angle: number };
 
@@ -50,6 +52,7 @@ export type CustomLayer = { id: string; type: 'image'; src: string; name: string
 
 /** Visual layers that can have fill + style + transform. */
 export const PAINTABLE_LAYERS = [
+  'background',
   'face', 'bangs', 'hairLeft', 'hairRight',
   'earLeft', 'earRight',
   'hornLeft', 'hornRight',
@@ -235,6 +238,7 @@ export const BEARD_STYLES: { id: BeardStyle; label: string }[] = [
 const solid = (color: string): LayerFill => ({ type: 'solid', color });
 
 const DEFAULT_LAYER_COLORS: Record<PaintableLayerId, LayerFill> = {
+  background: { type: 'none' },
   face: solid('#f0c8a0'),
   bangs: solid('#ffffff'),
   hairLeft: solid('#ffffff'),
@@ -413,6 +417,7 @@ export function transformToString(t: LayerTransform | undefined): string {
 
 /** Convert a fill spec to a CSS value (color string or url(#...)) for use as --layer-fill. */
 export function fillToCssValue(fill: LayerFill, gradientId: string): string {
+  if (fill.type === 'none') return 'transparent';
   return fill.type === 'solid' ? fill.color : `url(#${gradientId})`;
 }
 

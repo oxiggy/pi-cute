@@ -8,6 +8,7 @@ type Props = {
   sticky?: boolean;
   fill?: LayerFill;
   onFillChange?: (fill: LayerFill) => void;
+  allowNoneFill?: boolean;
   children?: ReactNode;
 };
 
@@ -17,6 +18,7 @@ export function LayerSection({
   sticky = false,
   fill,
   onFillChange,
+  allowNoneFill = false,
   children,
 }: Props) {
   const [open, setOpen] = useState(defaultOpen);
@@ -36,7 +38,7 @@ export function LayerSection({
       {open && (
         <div className="layer-body">
           {fill !== undefined && onFillChange && (
-            <FillPicker fill={fill} onChange={onFillChange} />
+            <FillPicker fill={fill} onChange={onFillChange} allowNone={allowNoneFill} />
           )}
           {children}
         </div>
