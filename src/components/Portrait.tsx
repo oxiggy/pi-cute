@@ -205,8 +205,8 @@ export const Portrait = forwardRef<SVGSVGElement>((_, externalRef) => {
           const c = angleToGradientCoords(f.angle);
           return (
             <linearGradient key={id} id={gradientId(id)} x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2}>
-              <stop offset="0%" stopColor={f.from} />
-              <stop offset="100%" stopColor={f.to} />
+              <stop offset={`${f.fromStop ?? 0}%`} stopColor={f.from} />
+              <stop offset={`${f.toStop ?? 100}%`} stopColor={f.to} />
             </linearGradient>
           );
         })}

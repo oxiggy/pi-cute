@@ -43,7 +43,16 @@ export type BeardStyle = 'none' | 'beard' | 'mustache';
 export type LayerFill =
   | { type: 'none' }
   | { type: 'solid'; color: string }
-  | { type: 'gradient'; from: string; to: string; angle: number };
+  | {
+      type: 'gradient';
+      from: string;
+      to: string;
+      angle: number;
+      /** Offset (0-100%) where `from` is fully saturated. Default 0. */
+      fromStop?: number;
+      /** Offset (0-100%) where `to` is fully saturated. Default 100. */
+      toStop?: number;
+    };
 
 export type LayerTransform = { x: number; y: number; scale: number; rotation: number };
 export const DEFAULT_TRANSFORM: LayerTransform = { x: 0, y: 0, scale: 1, rotation: 0 };
