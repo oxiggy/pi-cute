@@ -33,7 +33,7 @@ export type EarStyle =
   | 'rabbit2' | 'rabbit3'
   | 'sheep'
   | 'wolf';
-export type HornStyle = 'none' | 'demon' | 'small';
+export type HornStyle = 'none' | 'demon' | 'small' | 'small2';
 export type HairAccessoryStyle = 'none' | 'halo' | 'tiara';
 export type MakeupStyle = 'none' | 'cheekStripes' | 'freckles' | 'mole' | 'dot';
 export type BeardStyle = 'none' | 'beard' | 'mustache';
@@ -212,7 +212,8 @@ export const EAR_STYLES: { id: EarStyle; label: string }[] = [
 export const HORN_STYLES: { id: HornStyle; label: string }[] = [
   { id: 'none', label: 'None' },
   { id: 'demon', label: 'Demon' },
-  { id: 'small', label: 'Small' },
+  { id: 'small', label: 'Small 1' },
+  { id: 'small2', label: 'Small 2' },
 ];
 
 export const HAIR_ACCESSORY_STYLES: { id: HairAccessoryStyle; label: string }[] = [
