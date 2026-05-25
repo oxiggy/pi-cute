@@ -311,3 +311,15 @@ input[type="color"] {
   transition: background 0.15s;
 }
 .btn:hover { background: #8a6cff; }
+
+.btn-secondary {
+  background: #34353f;
+  color: #e8e8ea;
+}
+.btn-secondary:hover { background: #44455a; }
+
+.export-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

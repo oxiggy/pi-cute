@@ -20,9 +20,12 @@ import {
 } from '../store/portrait';
 import { LayerSection } from './LayerSection';
 
-type Props = { onExport: () => void };
+type Props = {
+  onExportPng: () => void;
+  onExportSvg: () => void;
+};
 
-export function Controls({ onExport }: Props) {
+export function Controls({ onExportPng, onExportSvg }: Props) {
   const {
     face, eyeLeft, eyeRight, browLeft, browRight, nose, mouth,
     bangs, hairLeft, hairRight, earLeft, earRight,
@@ -439,9 +442,14 @@ export function Controls({ onExport }: Props) {
 
       <LayerSection title="Фон" {...fillProps('background')} allowNoneFill />
 
-      <button className="btn" onClick={onExport}>
-        Скачать PNG
-      </button>
+      <div className="export-row">
+        <button className="btn" onClick={onExportPng}>
+          Скачать PNG
+        </button>
+        <button className="btn btn-secondary" onClick={onExportSvg}>
+          Скачать SVG
+        </button>
+      </div>
     </aside>
   );
 }
